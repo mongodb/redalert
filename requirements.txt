@@ -1,6 +1,2 @@
-# Dev/Deployment
-sphinx
-sphinx_rtd_theme
-nose
-coverage
-pypi-publisher
+click==6.7
+PyYAML==3.12
