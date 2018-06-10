@@ -1,0 +1,19 @@
+    # type: address-size
+    # type: command-group-all SUPERSEDED by run-bash-script
+    # type: compile-and-run-gcc-auto SUPERSEDED by compile-gcc with arg run
+    # type: compile-gcc-auto SUPERSEDED by compile-gcc
+    type: compile-visual-studio
+    # type: dpkg-installed
+    # type: file-does-not-exist
+    # type: file-exists
+    type: gem-installed
+    type: irp-stack-size
+    type: lxc-containers-configured
+    type: open-files
+    type: python-module-version
+    type: run-bash-script
+    type: run-program-system-python
+    type: run-program-system-python2
+    type: shell-operation
+    type: yum-group-any
+    type: yum-installed
