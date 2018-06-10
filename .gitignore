@@ -40,3 +40,7 @@ docs/_build
 output/
 
 dist/*
+venv/*
+.venv/*
+.vagrant/*
+.pytest_cache/*
