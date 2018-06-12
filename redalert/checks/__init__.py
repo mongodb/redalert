@@ -22,5 +22,7 @@ def get_check(name, args=None):
     elif name == 'compile-gcc':
         from .compile_gcc import CompileGccCheck
         return CompileGccCheck(**args)
+    elif name == 'run-bash-script':
+        return RunBashScript(**args)
 
     raise NotImplementedError
