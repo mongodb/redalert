@@ -1,6 +1,6 @@
 """dpkg package checkers"""
 
-import apt
+import apt #pylint: disable-msg=import-error
 
 from .exc import CheckFailure
 
