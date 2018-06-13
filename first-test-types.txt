@@ -2,18 +2,29 @@
     # type: command-group-all SUPERSEDED by run-bash-script
     # type: compile-and-run-gcc-auto SUPERSEDED by compile-gcc with arg run
     # type: compile-gcc-auto SUPERSEDED by compile-gcc
+
+    # Windows specific
     type: compile-visual-studio
+    type: irp-stack-size
+
+    # Possibly not needed    
+    type: lxc-containers-configured
+
     # type: dpkg-installed
     # type: file-does-not-exist
     # type: file-exists
-    type: gem-installed
-    type: irp-stack-size
-    type: lxc-containers-configured
-    type: open-files
+    # type: gem-installed
+
+
+    # type: open-files
+    # type: run-bash-script
+    # type: shell-operation SUPERSEDED by run-bash-script
+
     type: python-module-version
-    type: run-bash-script
+
+    # Supersede by run-python-script
     type: run-program-system-python
     type: run-program-system-python2
-    type: shell-operation
+
     type: yum-group-any
     type: yum-installed
