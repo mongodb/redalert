@@ -1,3 +1,5 @@
+"""Checks related to Ruby Gems."""
+
 import subprocess
 
 from .exc import CheckFailure
@@ -17,6 +19,7 @@ class GemInstalledCheck:
         self.version = version
 
     def check(self):
+        """Check if the gem indicated by name is installed and the correct version."""
         installed_gems = get_installed_gems()
         for gem in installed_gems:
             if self.name in gem:

@@ -1,3 +1,5 @@
+"""Contains various checks that redalert can perform on a system."""
+
 from .exc import CheckFailure
 from .file_exists import FileExistsCheck, FileNotExistsCheck
 from .ulimit_checks import AddressSizeCheck, UlimitCheck
