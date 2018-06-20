@@ -8,4 +8,5 @@ install:
 
 script:
   - pylint redalert
-  - pytest
+  - pytest -m agnostic
+  - pytest -m ubuntu
