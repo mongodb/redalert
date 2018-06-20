@@ -1,16 +1,16 @@
-# type: run-bash-script
+# type: run-script
 
 import subprocess
 import tempfile
 
 from .exc import CheckFailure
 
-class RunBashScript:
+class RunScript:
     """A check for running a bash script and optionally checks output.
 
     Takes the following arguments:
     source (required): The source code of the script.
-    output: expected output string.
+    output: string to which the output of the script will be compared to determine a successful run. If omitted, only checks that the script exits with returncode 0.
     interpreter: path to bash. Default is '/bin/bash'.
     """
     
@@ -20,7 +20,7 @@ class RunBashScript:
         self.interpreter = interpreter
         
     def check(self):
-        script = tempfile.NamedTemporaryFile(mode='w+', suffix='.sh')
+        script = tempfile.NamedTemporaryFile(mode='w+')
         script.write(self.source)
         script.flush()
 
