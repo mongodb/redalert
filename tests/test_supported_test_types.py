@@ -2,6 +2,7 @@ import pytest
 from redalert.checks import get_check
 
 
+@pytest.mark.skippable
 def test_supported_test_types():
     supported_test_types = [
         'address-size', 'compile-gcc', 'compile-visual-studio',
