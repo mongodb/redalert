@@ -1,0 +1,256 @@
+# Design: Redalert Image Testing
+## Author: Mathew Robinson <chasinglogic@gmail.com>
+
+## Summary
+Redalert is a tool used for system validation. Similar to ChefSpec/ServerSpec
+however written in Python and configured with YAML to be more familiar to those
+used to working with Ansible.
+
+## Behavioral Description
+Redalert will read yaml files containing tests and test configuration, it will
+then run these tests against the system and report the successes and failures.
+
+## Detailed Design
+
+### CLI
+
+Redalert will have a subcommand interface with the following commands:
+
+ - [init](#init)
+ - [run](#run)
+ - [convert](#convert)
+ - [alias](#alias)
+ - [gen-aliases](#gen-aliases)
+
+#### init
+
+The init subcommand will take zero to one arguments. The argument will be a
+directory name where to create the dummy test files. If no argument is given
+will generate them in the local directory.
+
+The test files generated will be:
+
+ - tests.(yml|yaml)
+ - aliases.(yml|yaml)
+
+If git is detected in $PATH then init will attempt to also run git init.
+
+#### run
+
+Run will simply run the tests. It takes zero to one arguments. If no arguments
+are given it looks for a tests.(yml|yaml) or redalert.(yml|yaml) in the local directory, in
+`$HOME/.redalert/` (`%APPDATA%` instead of `$HOME` on windows.) and finally in
+`/etc/redalert/` (`C:\redalert` on windows). 
+
+It takes the following flags:
+
+ - `--quiet` only report test failures 
+ - `--jobs $VALUE` specify the number of parallel tests to run. Default to # of cores
+ - `--test $TEST_NAME` specify a test by name to run, can be provided multiple times.
+ - `--suite $SUITE_NAME` which test suite to run, an [alias](#aliases) can be provided as the suite name.
+   Can be provided multiple times. There is a default "all" alias which matches
+   all tests and is used if `--suite` is not provided. 
+ - `--file $FILE_PATH` in lieu of searching in directories you can specify a file using this flag.
+   If provided the aliases.(yml|yaml) file will not be looked for but aliases in the file will still be loaded.
+ - `--output $FORMAT` specify the output format. Valid values: text, json, csv. Default: text
+
+run will attempt to load an additional file `aliases.(yml|yaml)` which specifies the
+available [aliases](#aliases) if not found aliases will be looked for as a key
+in the `tests.(yml|yaml)` according to the [aliases](#aliases) section.
+
+run will run tests in parallel.
+
+#### convert 
+
+Convert converts other server testing formats to redalert. This will only
+support [Greenbay](https://github.com/mongodb/greenbay) to start however will
+support other common formats in the future such as ServerSpec. 
+
+#### alias 
+
+alias takes two arguments followed by varargs of the form:
+
+``` 
+redalert alias TEST_FILE ALIAS_NAME SUITES_TO_ADD_TO_ALIAS...
+```
+
+It will attempt to find an aliases.(yml|yaml) in the same directory as `TEST_FILE` it
+will load both files it will create an alias in aliases.(yml|yaml) (creating the file
+if it does not exist) it will then populate the alias with the
+`SUITES_TO_ADD_TO_ALIAS` suites replacing in any tests, which have all
+those suites, the suites with the create alias. It will then save the file.
+
+#### gen-aliases (Stretch Goal)
+
+gen-aliases takes a test file as input and generates an aliases.(yml|yaml) with
+aliases that are generated based on which suites are commonly used together.
+This command is computationally intensive so likely will take a long time.
+
+### Config File/s
+
+Redalert has two config files: aliases.(yaml|yml) and tests.(yaml|yml). They
+are described in the below sections and should always be co-located on the file
+system.
+
+#### Aliases
+
+Aliases are a way of uncluttering your test files. For example if you are
+testing various versions of Ubuntu and you have suites names
+ubuntu$VERSION\_SPECIFIER, such your list of ubuntu suites looks like:
+
+ - `ubuntu1204`
+ - `ubuntu1404`
+ - `ubuntu1604`
+ - `ubuntu1804`
+
+And you have a test called "gcc installed" that looks like:
+
+```yaml
+tests:
+  - name: gcc installed
+    suites:
+      - ubuntu1204
+      - ubuntu1404
+      - ubuntu1604
+      - ubuntu1804
+    type: dpkg-installed
+    args:
+      name: gcc
+```
+
+You can simplify this with an alias:
+
+```yaml
+aliases:
+    ubuntu:
+      - ubuntu1204
+      - ubuntu1404
+      - ubuntu1604
+      - ubuntu1804
+tests:
+  - name: gcc installed
+    suites:
+      - ubuntu
+    type: dpkg-installed
+    args:
+      name: gcc
+```
+
+Which for this trivial example is not particularly useful. But as you
+accumulate multiple tests which span all Ubuntus you can see that your test
+file would grow quite long quite quickly. Additionally if you only have a set
+of suites which run every test it makes removing a deprecated platform a one
+line change.
+
+#### Tests
+
+The tests yaml file has a single key "tests" which is a yaml list of maps which have the following form:
+
+```yaml
+# Human readable test name
+name: name of the test
+# Suites are user defined, this key is optional if not provided test will only
+# match the all alias
+suites:
+    - suite this test should be run for
+# See (Checks "tests") below
+type: test-type
+# Arguments for the test. See the documentation for the given test type to
+# determine which args are available / required.
+args:
+    key: value
+```
+
+The final product for a yum-installed test looks like:
+
+```yaml
+tests:
+  - name: gcc is installed
+    suites:
+      - rhel70
+    type: yum-installed
+    args:
+      name: gcc
+```
+
+### Checks ("tests")
+
+Checks (synonym for tests in redalert terms) are Python classes which follow a standard as laid out below:
+
+```python
+class ExampleCheck:
+    """An example check. It does nothing.
+
+    Type: example-check
+
+    Supported Platforms:
+        - Mac
+        - Linux
+        - Windows
+
+    Requirements:
+        This test has no requirements. I could omit this section of the
+        docstring since it will work anywhere redalert can run. But if it
+        required that certain programs be available it should be documented
+        here.
+    
+    Arguments:
+        required_arg (required): A string value that will be thrown away.
+        optional_arg: A value of any type that will be ignored. As a style
+                      guide example, I have inflated the description of this
+                      useless argument arbitrarily. This allows me to
+                      demonstrate how to wrap lines for long argument
+                      descriptions.
+
+    Notes:
+        If I had any special behavior based on arguments passed I should
+        note it here. For example if I have multiple Types and have 
+        different behavior for each I should make note of that here.
+        Otherwise this section can be omitted.
+    """
+
+    def __init__(self, required_arg, optional_arg=None):
+        pass
+
+    def check(self):
+        pass
+```
+
+The docstring for the check must follow the format perscribed above as it is
+used in the generated documentation for the checks.
+
+You can specify multiple Types in a list form similiar to Supported Platforms.
+
+All check classes must have a check method which takes no arguments and returns
+no value. It should raise a CheckFailure exception if the test is a failure or
+if any setup errors occur which the string error message to be shown to the user.
+
+#### MVP Check Types
+
+These are the check types we will minimally need to implement to make Redalert
+a drop-in Greenbay replacement for Build Team use.
+
+ - [X] type: address-size
+ - [X] type: command-group-all SUPERSEDED by run-bash-script
+ - [X] type: compile-and-run-gcc-auto SUPERSEDED by compile-gcc with arg run
+ - [X] type: compile-gcc-auto SUPERSEDED by compile-gcc
+ - [X] type: dpkg-installed
+ - [X] type: file-does-not-exist
+ - [X] type: file-exists
+ - [X] type: gem-installed
+ - [X] type: open-files
+ - [X] type: run-bash-script
+ - [X] type: shell-operation SUPERSEDED by run-bash-script
+ - [X] type: python-module-version
+ - [ ] type: run-program-system-python (should be superseded by run-python-script)
+ - [ ] type: run-program-system-python2 (should be superseded by run-python-script)
+ - [ ] type: yum-group-any
+ - [ ] type: yum-installed
+ - [ ] type: compile-visual-studio
+ - [ ] type: irp-stack-size
+ - [ ] type: lxc-containers-configured (possibly not needed?)
+
+## Future Work
+
+ - Ansible Module / Integration
+ - ServerSpec test parity
