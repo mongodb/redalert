@@ -4,7 +4,7 @@
 ## Summary
 
 Redalert is a tool used for system validation, similar to ChefSpec/ServerSpec.
-It is written in Python and configured with YAML to be more familiar to those
+It is written in Go and configured with YAML to be more familiar to those
 accustomed to working with Ansible.
 
 ## Behavioral Description
@@ -181,55 +181,82 @@ tests:
 
 ### Checks ("tests")
 
-Checks (synonym for tests in redalert terms) are Python classes which follow a standard as laid out below:
+The Check interface is shown below:
 
-```python
-class ExampleCheck:
-    """An example check. It does nothing.
-
-    Type: example-check
-
-    Supported Platforms:
-        - Mac
-        - Linux
-        - Windows
-
-    Requirements:
-        This test has no requirements. I could omit this section of the
-        docstring since it will work anywhere redalert can run. But if it
-        required that certain programs be available it should be documented
-        here.
-    
-    Arguments:
-        required_arg (required): A string value that will be thrown away.
-        optional_arg: A value of any type that will be ignored. As a style
-                      guide example, I have inflated the description of this
-                      useless argument arbitrarily. This allows me to
-                      demonstrate how to wrap lines for long argument
-                      descriptions.
-
-    Notes:
-        If I had any special behavior based on arguments passed I should
-        note it here. For example if I have multiple Types and have 
-        different behavior for each I should make note of that here.
-        Otherwise this section can be omitted.
-    """
-
-    def __init__(self, required_arg, optional_arg=None):
-        pass
-
-    def check(self):
-        pass
+```go
+type Check interface {
+  FromArgs(args interface{}) (Check, error)
+  Check() error
+}
 ```
 
-The docstring for the check must follow the format perscribed above as it is
+Checks (synonym for tests in redalert terms) are structs which implement the
+Check interface and follow a standard godoc comment template as laid out below:
+
+```go
+// ExampleCheck is just an example so it checks nothing.
+// 
+// Type: example-check
+// 
+// Supported Platforms:
+//     - Mac
+//     - Linux
+//     - Windows
+// 
+// Requirements:
+//     This test has no requirements. I could omit this section of the
+//     docstring since it will work anywhere redalert can run. But if it
+//     required that certain programs be available it should be documented
+//     here.
+// 
+// Arguments:
+//     required_arg (required): A string value that will be thrown away.
+//     optional_arg: A value of any type that will be ignored. As a style
+//                   guide example, I have inflated the description of this
+//                   useless argument arbitrarily. This allows me to
+//                   demonstrate how to wrap lines for long argument
+//                   descriptions.
+// 
+// Notes:
+//     If I had any special behavior based on arguments passed I should
+//     note it here. For example if I have multiple Types and have 
+//     different behavior for each I should make note of that here.
+//     Otherwise this section can be omitted.
+type ExampleCheck struct {
+    RequiredArg string `mapstructure:"required_arg"`
+    OptionalArg interface{} `mapstructure:"optional_arg"`
+}
+
+func (ec ExampleCheck) FromArgs(args map[string]interface{}) (Check, error) {
+    // hasRequiredArgs is defined in the checks package
+    err := hasRequiredArgs([]string{"required_arg"}, args)
+    if err != nil {
+        return nil, err
+    }
+
+    // newDecoder is defined in the checks package and creates a
+    // mapstructure.Decoder with our default config 
+    decoder, err := newDecoder(&ec)
+    if err != nil {
+        return err
+    }
+
+    return decoder.Decode(args)
+}
+
+func (ec ExampleCheck) Check() error {
+    return nil
+}
+```
+
+The doc comments for the check must follow the format perscribed above as it is
 used in the generated documentation for the checks.
 
 You can specify multiple Types in a list form similiar to Supported Platforms.
 
 All check classes must have a check method which takes no arguments and returns
-no value. It should raise a CheckFailure exception if the test is a failure or
-if any setup errors occur which the string error message to be shown to the user.
+no value. It should return an error if the test is a failure or if any setup
+errors occur with the string error message to be shown to the user.
 
 #### MVP Check Types
 
