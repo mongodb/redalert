@@ -2,13 +2,16 @@
 ## Author: Mathew Robinson <chasinglogic@gmail.com>
 
 ## Summary
-Redalert is a tool used for system validation. Similar to ChefSpec/ServerSpec
-however written in Python and configured with YAML to be more familiar to those
-used to working with Ansible.
+
+Redalert is a tool used for system validation, similar to ChefSpec/ServerSpec.
+It is written in Python and configured with YAML to be more familiar to those
+accustomed to working with Ansible.
 
 ## Behavioral Description
+
 Redalert will read yaml files containing tests and test configuration, it will
-then run these tests against the system and report the successes and failures.
+then run these tests against the system being tested and report the successes
+and failures.
 
 ## Detailed Design
 
@@ -25,8 +28,8 @@ Redalert will have a subcommand interface with the following commands:
 #### init
 
 The init subcommand will take zero to one arguments. The argument will be a
-directory name where to create the dummy test files. If no argument is given
-will generate them in the local directory.
+directory name in which to create the dummy test files. If no argument is given
+Redalert will generate them in the local directory.
 
 The test files generated will be:
 
@@ -38,9 +41,9 @@ If git is detected in $PATH then init will attempt to also run git init.
 #### run
 
 Run will simply run the tests. It takes zero to one arguments. If no arguments
-are given it looks for a tests.(yml|yaml) or redalert.(yml|yaml) in the local directory, in
-`$HOME/.redalert/` (`%APPDATA%` instead of `$HOME` on windows.) and finally in
-`/etc/redalert/` (`C:\redalert` on windows). 
+are given it looks for a tests.(yml|yaml) or redalert.(yml|yaml) in the local
+directory, in `$HOME/.redalert/` (`%APPDATA%` instead of `$HOME` on windows.)
+and finally in `/etc/redalert/` (`C:\redalert` on windows). 
 
 It takes the following flags:
 
@@ -54,9 +57,10 @@ It takes the following flags:
    If provided the aliases.(yml|yaml) file will not be looked for but aliases in the file will still be loaded.
  - `--output $FORMAT` specify the output format. Valid values: text, json, csv. Default: text
 
-run will attempt to load an additional file `aliases.(yml|yaml)` which specifies the
-available [aliases](#aliases) if not found aliases will be looked for as a key
-in the `tests.(yml|yaml)` according to the [aliases](#aliases) section.
+run will attempt to load an additional file `aliases.(yml|yaml)` which
+specifies the available [aliases](#aliases). If not found aliases will be
+looked for as a key in the `tests.(yml|yaml)` according to the
+[aliases](#aliases) section.
 
 run will run tests in parallel.
 
@@ -74,11 +78,13 @@ alias takes two arguments followed by varargs of the form:
 redalert alias TEST_FILE ALIAS_NAME SUITES_TO_ADD_TO_ALIAS...
 ```
 
-It will attempt to find an aliases.(yml|yaml) in the same directory as `TEST_FILE` it
-will load both files it will create an alias in aliases.(yml|yaml) (creating the file
-if it does not exist) it will then populate the alias with the
-`SUITES_TO_ADD_TO_ALIAS` suites replacing in any tests, which have all
-those suites, the suites with the create alias. It will then save the file.
+Redalert will attempt to find an aliases.(yml|yaml) in the same directory as
+`TEST_FILE`. If found, it will load both files and replace the
+aliases.(yml|yaml) with a new aliases file which includes the existing and new
+alias. Otherwise, it will create an alias in aliases.(yml|yaml) it will then
+populate the alias with the `SUITES_TO_ADD_TO_ALIAS` suites replacing in any
+tests, which have all those suites, the suites with the create alias. It will
+then save the test file.
 
 #### gen-aliases (Stretch Goal)
 
