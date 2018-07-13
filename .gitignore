@@ -1,46 +1,12 @@
-*.py[cod]
-
-# C extensions
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
 *.so
+*.dylib
 
-# pycharm
-.idea/
-.idea
+# Test binary, build with `go test -c`
+*.test
 
-# Packages
-*.egg
-*.egg-info
-build
-eggs
-parts
-bin
-var
-sdist
-develop-eggs
-.installed.cfg
-lib
-lib64
-
-# Installer logs
-pip-log.txt
-
-# Unit test / coverage reports
-.coverage
-.tox
-nosetests.xml
-
-# Complexity
-output/*.html
-output/*/index.html
-
-# Sphinx
-docs/_build
-
-# Cookiecutter
-output/
-
-dist/*
-venv/*
-.venv/*
-.vagrant/*
-.pytest_cache/*
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out

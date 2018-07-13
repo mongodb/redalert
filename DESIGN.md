@@ -236,18 +236,18 @@ if any setup errors occur which the string error message to be shown to the user
 These are the check types we will minimally need to implement to make Redalert
 a drop-in Greenbay replacement for Build Team use.
 
- - [X] type: address-size
- - [X] type: command-group-all SUPERSEDED by run-bash-script
- - [X] type: compile-and-run-gcc-auto SUPERSEDED by compile-gcc with arg run
- - [X] type: compile-gcc-auto SUPERSEDED by compile-gcc
- - [X] type: dpkg-installed
- - [X] type: file-does-not-exist
- - [X] type: file-exists
- - [X] type: gem-installed
- - [X] type: open-files
- - [X] type: run-bash-script
- - [X] type: shell-operation SUPERSEDED by run-bash-script
- - [X] type: python-module-version
+ - [ ] type: address-size
+ - [ ] type: command-group-all SUPERSEDED by run-bash-script
+ - [ ] type: compile-and-run-gcc-auto SUPERSEDED by compile-gcc with arg run
+ - [ ] type: compile-gcc-auto SUPERSEDED by compile-gcc
+ - [ ] type: dpkg-installed
+ - [ ] type: file-does-not-exist
+ - [ ] type: file-exists
+ - [ ] type: gem-installed
+ - [ ] type: open-files
+ - [ ] type: run-bash-script
+ - [ ] type: shell-operation SUPERSEDED by run-bash-script
+ - [ ] type: python-module-version
  - [ ] type: run-program-system-python (should be superseded by run-python-script)
  - [ ] type: run-program-system-python2 (should be superseded by run-python-script)
  - [ ] type: yum-group-any

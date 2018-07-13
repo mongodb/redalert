@@ -1,8 +1,0 @@
-# Dev/Deployment
-sphinx
-sphinx_rtd_theme
-nose
-coverage
-pylint
-pytest
-wheel
