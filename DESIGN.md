@@ -90,7 +90,6 @@ then save the test file.
 
 gen-aliases takes a test file as input and generates an aliases.(yml|yaml) with
 aliases that are generated based on which suites are commonly used together.
-This command is computationally intensive so likely will take a long time.
 
 ### Config File/s
 
@@ -101,7 +100,7 @@ system.
 #### Aliases
 
 Aliases are a way of uncluttering your test files. For example if you are
-testing various versions of Ubuntu and you have suites names
+testing multiple versions of Ubuntu and you have suites names
 ubuntu$VERSION\_SPECIFIER, such your list of ubuntu suites looks like:
 
  - `ubuntu1204`
@@ -143,10 +142,10 @@ tests:
 ```
 
 Which for this trivial example is not particularly useful. But as you
-accumulate multiple tests which span all Ubuntus you can see that your test
-file would grow quite long quite quickly. Additionally if you only have a set
-of suites which run every test it makes removing a deprecated platform a one
-line change.
+accumulate multiple tests which span all Ubuntus you can see that your test file
+would become large and full to redundant text quickly. Additionally if you only
+have a set of suites which run every test it makes removing a deprecated
+platform a one line change.
 
 #### Tests
 
