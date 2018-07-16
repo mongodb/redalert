@@ -14,8 +14,10 @@ Vagrant.configure("2") do |config|
     ubuntu.vm.box = "ubuntu/bionic64"
     ubuntu.vm.provision "shell", inline: <<-SHELL
     apt-get update
-    apt-get install -y python3 python3-dev python3-pip python3-venv
-    python3 -m venv ~/.venv
+    apt-get install git golang -y
+    echo "Creating Directories and linking"
+    mkdir -p $HOME/go/src/github.com/chasinglogic
+    ln -s /vagrant $HOME/go/src/github.com/chasinglogic/redalert
 SHELL
     ubuntu.vm.provision "test", type: "shell", path: 'scripts/linux_test.sh', env: {'PLATFORM': ENV['PLATFORM']}
   end
@@ -23,9 +25,9 @@ SHELL
   config.vm.define "centos" do |centos|
     centos.vm.box = "centos/7"
     centos.vm.provision "shell", inline: <<-SHELL
-yum install https://centos7.iuscommunity.org/ius-release.rpm
-yum install python36u python36u-pip python36u-devel
-python3.6 -m venv ~/.venv
+    yum install git golang -y
+    mkdir -p $HOME/go/src/github.com/chasinglogic
+    ln -s /vagrant $HOME/go/src/github.com/chasinglogic/redalert
 SHELL
     centos.vm.provision "test", type: "shell", path: 'scripts/linux_test.sh', env: {'PLATFORM': ENV['PLATFORM']}
   end

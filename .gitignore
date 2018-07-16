@@ -4,6 +4,8 @@
 *.dll
 *.so
 *.dylib
+*.vagrant/*
+ubuntu-bionic-18.04-cloudimg-console.log
 
 # Test binary, build with `go test -c`
 *.test

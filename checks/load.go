@@ -21,6 +21,16 @@ var availableChecks = map[string]ArgableFunc{
 		args["interpreter"] = "/bin/bash"
 		return RunScript{}.FromArgs(args)
 	},
+	"yum-installed": func(args map[string]interface{}) (Checker, error) {
+		return YumInstalled{}.FromArgs(args)
+	},
+	"apt-installed": func(args map[string]interface{}) (Checker, error) {
+		return AptInstalled{}.FromArgs(args)
+	},
+	// Alias for "apt-installed" for backward compatibility
+	"dpkg-installed": func(args map[string]interface{}) (Checker, error) {
+		return AptInstalled{}.FromArgs(args)
+	},
 }
 
 // LoadCheck will return the appropriate Checker based on the test type name.
