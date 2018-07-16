@@ -11,8 +11,8 @@ import (
 //	 - file-exists
 //   - file-does-not-exist
 //
-// Support Platforms:
-//   - Mac
+// Supported Platforms:
+//   - MacOS
 //   - Linux
 //   - Windows
 //
