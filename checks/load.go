@@ -14,6 +14,13 @@ var availableChecks = map[string]ArgableFunc{
 		args["exists"] = false
 		return FileChecker{}.FromArgs(args)
 	},
+	"run-script": func(args map[string]interface{}) (Checker, error) {
+		return RunScript{}.FromArgs(args)
+	},
+	"run-bash-script": func(args map[string]interface{}) (Checker, error) {
+		args["interpreter"] = "/bin/bash"
+		return RunScript{}.FromArgs(args)
+	},
 }
 
 // LoadCheck will return the appropriate Checker based on the test type name.
