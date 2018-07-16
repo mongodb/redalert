@@ -61,6 +61,54 @@ func TestRunScript(t *testing.T) {
 			},
 			ShouldError: true,
 		},
+		{
+			Name: "python echo 123 expecting 123",
+			Args: map[string]interface{}{
+				"source":      "print('123')",
+				"interpreter": "python",
+				"output":      "123",
+			},
+		},
+		{
+			Name: "python echo 123 expecting 111",
+			Args: map[string]interface{}{
+				"source":      "print('123')",
+				"interpreter": "python",
+				"output":      "111",
+			},
+			ShouldError: true,
+		},
+		{
+			Name: "python exit 0 check for exit code",
+			Args: map[string]interface{}{
+				"source":      "exit(0)",
+				"interpreter": "python",
+			},
+		},
+		{
+			Name: "python exit 1 check for exit code",
+			Args: map[string]interface{}{
+				"source":      "exit(1)",
+				"interpreter": "python",
+			},
+			ShouldError: true,
+		},
+		{
+			Name: "python import module check exit code",
+			Args: map[string]interface{}{
+				"source": `import datetime
+print(datetime.date.today())`,
+				"interpreter": "python",
+			},
+		},
+		{
+			Name: "python import bad module check exit code",
+			Args: map[string]interface{}{
+				"source":      "import datetimes",
+				"interpreter": "python",
+			},
+			ShouldError: true,
+		},
 	}
 
 	for _, test := range tests {

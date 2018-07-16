@@ -21,6 +21,10 @@ var availableChecks = map[string]ArgableFunc{
 		args["interpreter"] = "/bin/bash"
 		return RunScript{}.FromArgs(args)
 	},
+	"run-python-script": func(args map[string]interface{}) (Checker, error) {
+		args["interpreter"] = "python"
+		return RunScript{}.FromArgs(args)
+	},
 }
 
 // LoadCheck will return the appropriate Checker based on the test type name.
