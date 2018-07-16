@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -30,15 +31,15 @@ func (sf *multiFlags) Type() string {
 }
 
 var (
-	fileFlag *string
+	fileFlag string
 	suites   multiFlags
 	tests    multiFlags
-	output   *string
+	output   string
 )
 
 func init() {
-	Run.Flags().StringVarP(fileFlag, "file", "f", "", "Path to test file to run. Note: this overrides default test file detection.")
-	Run.Flags().StringVarP(output, "output", "o", "", "Output format to use. Valid values: text, json, csv. Default: text")
+	Run.Flags().StringVarP(&fileFlag, "file", "f", "", "Path to test file to run. Note: this overrides default test file detection.")
+	Run.Flags().StringVarP(&output, "output", "o", "", "Output format to use. Valid values: text, json, csv. Default: text")
 	Run.Flags().Var(&suites, "suite", "Suite or alias name to run, can be passed multiple times.")
 	Run.Flags().Var(&tests, "test", "Specific test name to run, can be passed multiple times.")
 
@@ -74,10 +75,10 @@ var Run = &cobra.Command{
 		var err error
 		var testsFile testfile.TestFile
 
-		if fileFlag == nil || *fileFlag == "" {
+		if fileFlag == "" {
 			testsFile, err = loadTestFile(findTestFile())
 		} else {
-			testsFile, err = loadTestFile(*fileFlag)
+			testsFile, err = loadTestFile(fileFlag)
 		}
 
 		if err != nil {
@@ -169,7 +170,7 @@ func findTestFile() string {
 
 func loadTestFile(path string) (testfile.TestFile, error) {
 	if path == "" {
-		return testfile.TestFile{}, fmt.Errorf("%s is not a valid path", path)
+		return testfile.TestFile{}, errors.New("no tests files found")
 	}
 
 	content, err := ioutil.ReadFile(path)
