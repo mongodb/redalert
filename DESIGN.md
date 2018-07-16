@@ -5,7 +5,7 @@
 
 Redalert is a tool used for system validation, similar to ChefSpec/ServerSpec.
 It is written in Go and configured with YAML and should be familiar to those
-accustomed to working with similarly modeled tools such as Ansible.
+accustomed to working with Ansible.
 
 ## Behavioral Description
 
@@ -259,7 +259,7 @@ The process for writing a checker goes as follows:
  - Decide on check "type name" (as seen in the yaml)
  - Write a check struct that implements the [Checker](https://github.com/chasinglogic/redalert/blob/master/checks/checks.go#L20) interface
  - Implement [Argable](https://github.com/chasinglogic/redalert/blob/master/checks/checks.go#L15) for your struct 
-   - Often you can just copy the FromArgs of the example check below
+   - Often you can just copy the FromArgs of [ExampleCheck](#checks-tests)
  - See the [file checker](https://github.com/chasinglogic/redalert/blob/master/checks/file.go) for a good example to follow
  - Finally, add your check to [load.go](https://github.com/chasinglogic/redalert/blob/master/checks/load.go) in the availableChecks map
    - Again see the "file-exists" and "file-does-not-exist" in the availableChecks map for good examples
