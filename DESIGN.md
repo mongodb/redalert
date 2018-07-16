@@ -4,8 +4,8 @@
 ## Summary
 
 Redalert is a tool used for system validation, similar to ChefSpec/ServerSpec.
-It is written in Go and configured with YAML to be more familiar to those
-accustomed to working with Ansible.
+It is written in Go and configured with YAML and should be familiar to those
+accustomed to working with similarly modeled tools such as Ansible.
 
 ## Behavioral Description
 
@@ -47,22 +47,23 @@ and finally in `/etc/redalert/` (`C:\redalert` on windows).
 
 It takes the following flags:
 
- - `--quiet` only report test failures 
- - `--jobs $VALUE` specify the number of parallel tests to run. Default to # of cores
+ - `--quiet` only report test failures.
+ - `--jobs $VALUE` specify the number of parallel tests to run. Default to # of cores.
  - `--test $TEST_NAME` specify a test by name to run, can be provided multiple times.
  - `--suite $SUITE_NAME` which test suite to run, an [alias](#aliases) can be provided as the suite name.
    Can be provided multiple times. There is a default "all" alias which matches
    all tests and is used if `--suite` is not provided. 
- - `--file $FILE_PATH` in lieu of searching in directories you can specify a file using this flag.
-   If provided the aliases.(yml|yaml) file will not be looked for but aliases in the file will still be loaded.
- - `--output $FORMAT` specify the output format. Valid values: text, json, csv. Default: text
+ - `--file $FILE_PATH` in lieu of searching in directories you can specify a configuration yaml file using this flag.
+   If provided, the aliases.(yml|yaml) file will not be looked for but aliases in the 
+   given file will still be loaded.
+ - `--output $FORMAT` specify the output format. Valid values: text, json, csv. Default: text.
 
-run will attempt to load an additional file `aliases.(yml|yaml)` which
-specifies the available [aliases](#aliases). If not found aliases will be
+Run will attempt to load an additional file `aliases.(yml|yaml)` which
+specifies the available [aliases](#aliases). If not found, aliases will be
 looked for as a key in the `tests.(yml|yaml)` according to the
 [aliases](#aliases) section.
 
-run will run tests in parallel.
+Run will run tests in parallel.
 
 #### convert 
 
@@ -102,7 +103,7 @@ system.
 
 Aliases are a way of uncluttering your test files. For example if you are
 testing various versions of Ubuntu and you have suites names
-ubuntu$VERSION\_SPECIFIER, such your list of ubuntu suites looks like:
+ubuntu$VERSION\_SPECIFIER, such that your list of ubuntu suites looks like:
 
  - `ubuntu1204`
  - `ubuntu1404`
@@ -258,10 +259,10 @@ The process for writing a checker goes as follows:
  - Decide on check "type name" (as seen in the yaml)
  - Write a check struct that implements the [Checker](https://github.com/chasinglogic/redalert/blob/master/checks/checks.go#L20) interface
  - Implement [Argable](https://github.com/chasinglogic/redalert/blob/master/checks/checks.go#L15) for your struct 
-   - Often you can just copy the FromArgs of the example check above.
+   - Often you can just copy the FromArgs of the example check below
  - See the [file checker](https://github.com/chasinglogic/redalert/blob/master/checks/file.go) for a good example to follow
- - Finally, add your check to [load.go](https://github.com/chasinglogic/redalert/blob/master/checks/load.go) in the availableChecks map.
-   - Again see the "file-exists" and "file-does-not-exist" in the availableChecks map for good examples.
+ - Finally, add your check to [load.go](https://github.com/chasinglogic/redalert/blob/master/checks/load.go) in the availableChecks map
+   - Again see the "file-exists" and "file-does-not-exist" in the availableChecks map for good examples
 
 #### MVP Check Types
 
