@@ -1,0 +1,5 @@
+package: github.com/chasinglogic/redalert
+import:
+- package: github.com/mitchellh/mapstructure
+- package: github.com/spf13/cobra
+  version: ^0.0.3

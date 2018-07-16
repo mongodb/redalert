@@ -1,0 +1,8 @@
+hash: 1fe1b58e94c018d955e055d35683b395941b3665056214988160323e1ae61035
+updated: 2018-07-16T11:37:28.797041734-04:00
+imports:
+- name: github.com/mitchellh/mapstructure
+  version: f15292f7a699fcc1a38a80977f80a046874ba8ac
+- name: github.com/spf13/cobra
+  version: ef82de70bb3f60c65fb8eebacbb2d122ef517385
+testImports: []
