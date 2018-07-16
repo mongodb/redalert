@@ -38,7 +38,7 @@ func (ctr CheckToRun) Check() error {
 	return ctr.Checker.Check()
 }
 
-// LoadChecks takes a slice of tesfile.Tests returns a slice of Checks to run
+// LoadChecks takes a slice of tesfile.Tests and returns a slice of Checks to run
 func LoadChecks(tests []testfile.Test) ([]CheckToRun, error) {
 	checks := make([]CheckToRun, len(tests))
 
