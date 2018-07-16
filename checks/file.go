@@ -36,14 +36,14 @@ type FileChecker struct {
 func (fc FileChecker) Check() error {
 	_, err := os.Stat(fc.Name)
 
-	switch os.IsNotExist(err) {
-	case true && fc.Exists:
+	isNotExist := os.IsNotExist(err)
+	if isNotExist && fc.Exists {
 		return fmt.Errorf("%s doesn't exist and should", fc.Name)
-	case false && !fc.Exists:
+	} else if !isNotExist && !fc.Exists {
 		return fmt.Errorf("%s does exist and shouldn't", fc.Name)
-	default:
-		return nil
 	}
+
+	return nil
 }
 
 // FromArgs will populate the FileChecker with the args given in the tests YAML
