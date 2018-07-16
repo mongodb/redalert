@@ -12,9 +12,7 @@ func TestFileExists(t *testing.T) {
 		t.Error(err)
 	}
 
-	defer func() {
-		os.Remove("test_exists.txt")
-	}()
+	defer os.Remove("test_exists.txt")
 
 	err = FileChecker{Exists: true, Name: "test_exists.txt"}.Check()
 	if err != nil {
