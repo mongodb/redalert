@@ -227,20 +227,12 @@ type ExampleCheck struct {
 }
 
 func (ec ExampleCheck) FromArgs(args map[string]interface{}) (Check, error) {
-    // hasRequiredArgs is defined in the checks package
-    err := hasRequiredArgs([]string{"required_arg"}, args)
-    if err != nil {
+    if err := requiredArgs(args, "required_arg"); err != nil {
         return nil, err
     }
-
-    // newDecoder is defined in the checks package and creates a
-    // mapstructure.Decoder with our default config 
-    decoder, err := newDecoder(&ec)
-    if err != nil {
-        return err
-    }
-
-    return decoder.Decode(args)
+    
+    err := decodeFromArgs(args, &ec)
+    return ec, err
 }
 
 func (ec ExampleCheck) Check() error {
@@ -256,6 +248,15 @@ You can specify multiple Types in a list form similiar to Supported Platforms.
 All check classes must have a check method which takes no arguments and returns
 no value. It should return an error if the test is a failure or if any setup
 errors occur with the string error message to be shown to the user.
+
+##### Adding a Checker
+
+The process for writing a checker goes as follows:
+
+ - Decide on check functionality
+ - Decide on check "type name" (as seen in the yaml)
+ - Write a check struct that implements the Checker interface
+ - Implement Argable for your struct (often can just copy the FromArgs of the example check above)
 
 #### MVP Check Types
 
