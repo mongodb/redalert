@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"github.com/chasinglogic/redalert/commands"
+)
 
 func main() {
-	fmt.Println("Redalert reporting for duty!")
+	commands.Root.Execute()
 }
