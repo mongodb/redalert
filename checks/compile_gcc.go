@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strings"
 )
@@ -27,12 +28,12 @@ func init() {
 //
 // Arguments:
 //   source (required): The source code of the script.
-//   interpreter: path to bash. Default is 'gcc' from the PATH
-//				  but it will also check if gcc exists in toolchain folders.
+//   compiler: path to the compiler. Default is 'gcc' from the PATH
+//	 cflags: compiles flags, string, e.g "-lss -lsasl2"
 type CompileGcc struct {
-	Source      string
-	Interpreter string
-	Cflags      string
+	Source   string
+	Compiler string
+	Cflags   string
 }
 
 // Check Runs a gcc command and checks the return code
@@ -42,12 +43,15 @@ func (cg CompileGcc) Check() error {
 	if err != nil {
 		return fmt.Errorf("Problem creating a tmpdir: %s", err)
 	}
+	defer os.RemoveAll(tmpfolder)
 
-	srcfileName := tmpfolder + "/src.c"
-	outfileName := tmpfolder + "/out.o"
+	srcfileName := filepath.Join(tmpfolder, "src.c")
+	outfileName := filepath.Join(tmpfolder, "out.o")
 
 	srcfile, err := os.Create(srcfileName)
-	defer os.RemoveAll(tmpfolder)
+	if err != nil {
+		return fmt.Errorf("Problem creating a srcfile: %s", err)
+	}
 
 	if runtime.GOOS == "windows" {
 		cg.Source = strings.Replace(cg.Source, "\n", "\r\n", -1)
@@ -65,7 +69,7 @@ func (cg CompileGcc) Check() error {
 	argv := []string{"-Werror", "-o", outfileName, srcfileName}
 	argv = append(argv, cg.Cflags)
 
-	cmd := exec.Command(cg.Interpreter, argv...)
+	cmd := exec.Command(cg.Compiler, argv...)
 	out, err := cmd.CombinedOutput()
 
 	if err != nil {
@@ -86,24 +90,8 @@ func (cg CompileGcc) FromArgs(args map[string]interface{}) (Checker, error) {
 		return nil, err
 	}
 
-	if _, interpreterGiven := args["interpreter"]; cg.Interpreter == "" && !interpreterGiven {
-
-		cg.Interpreter = "gcc"
-
-		paths := []string{
-			"/opt/mongodbtoolchain/v2/bin/gcc",
-			"/opt/mongodbtoolchain/v1/bin/gcc",
-			"/opt/mongodbtoolchain/bin/gcc",
-			"/usr/bin/gcc",
-			"/usr/local/bin/gcc",
-		}
-
-		for _, path := range paths {
-			if _, err := os.Stat(path); !os.IsNotExist(err) {
-				cg.Interpreter = path
-				break
-			}
-		}
+	if _, compilerGiven := args["compiler"]; cg.Compiler == "" && !compilerGiven {
+		cg.Compiler = "gcc"
 	}
 
 	if _, cflagsGiven := args["cflags"]; cg.Cflags == "" && !cflagsGiven {
