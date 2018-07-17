@@ -60,16 +60,16 @@ def convert_run_program_system_python(test):
         test['args']['interpreter'] = 'C:\\Python36\\python.exe'
     elif test['type'].endswith('python2'):
         test['args']['interpreter'] = 'python2'
-    test['type'] = 'run-python-source'
+    test['type'] = 'run-python-script'
     return test
 
 
 def convert_command_group_all(test):
-    """command-group-all superseded by run-bash-script and run-powershell-source"""
+    """command-group-all superseded by run-bash-script and run-powershell-script"""
     cmds = [x['command'] for x in test['args'].pop('commands')]
     test['args']['source'] = '\n'.join(cmds)
     if 'windows' in test['name']:
-        test['type'] = 'run-powershell-source'
+        test['type'] = 'run-powershell-script'
     return test
 
 
