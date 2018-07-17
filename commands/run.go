@@ -149,8 +149,10 @@ func findTestFile() string {
 	possiblePaths := []string{
 		"tests.yml",
 		"tests.yaml",
-		filepath.Join(os.Getenv("HOME"), "redalert", "tests.yml"),
-		filepath.Join(os.Getenv("HOME"), "redalert", "tests.yaml"),
+		"redalert.yml",
+		"redalert.yaml",
+		filepath.Join(os.Getenv("HOME"), ".redalert", "tests.yml"),
+		filepath.Join(os.Getenv("HOME"), ".redalert", "tests.yaml"),
 		filepath.Join(os.Getenv("APPDATA"), "redalert", "tests.yml"),
 		filepath.Join(os.Getenv("APPDATA"), "redalert", "tests.yaml"),
 		"/etc/redalert.yml",
