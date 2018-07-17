@@ -78,6 +78,8 @@ def convert_compile_gcc(test):
     if 'and-run' in test['type']:
         test['args']['run'] = True
     test['type'] = 'compile-gcc'
+    if 'cflags' in test['args']:
+        test['args']['cflags'] = ' '.join(test['args']['cflags'])
     return test
 
 
