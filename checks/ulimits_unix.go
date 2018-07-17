@@ -14,15 +14,12 @@ func init() {
 	availableChecks["open-files"] = func(args map[string]interface{}) (Checker, error) {
 		args["item"] = "nofile"
 		args["type"] = "hard"
-		args["limit"] = args["value"]
-		delete(args, "value")
 		return UlimitChecker{}.FromArgs(args)
 	}
+
 	availableChecks["address-size"] = func(args map[string]interface{}) (Checker, error) {
 		args["item"] = "as"
 		args["type"] = "hard"
-		args["limit"] = args["value"]
-		delete(args, "value")
 		return UlimitChecker{}.FromArgs(args)
 	}
 }
@@ -38,7 +35,7 @@ func init() {
 //
 // Arguments:
 //   - item (required): A string value representing the type of limit to check
-//   - limit (required): Numerical value representing the minimum value to be tested
+//   - value (required): Numerical value representing the minimum value to be tested
 //   - type: "hard" or "soft" with a default of "hard"
 //
 // Notes:
@@ -51,10 +48,10 @@ func init() {
 //       - stack
 //       - cpu
 //       - as
-//   - "limit" can be '-1' to represent that the resource limit should be unlimited
+//   - "value" can be '-1' to represent that the resource limit should be unlimited
 type UlimitChecker struct {
 	Item   string
-	Limit  uint64
+	Value  int
 	IsHard bool
 	Type   string
 }
@@ -88,10 +85,10 @@ func (uc UlimitChecker) Check() error {
 		LimitToCheck = rLimit.Cur
 	}
 
-	if uc.Limit == syscall.RLIM_INFINITY && LimitToCheck != syscall.RLIM_INFINITY {
+	if uint64(uc.Value) == syscall.RLIM_INFINITY && LimitToCheck != syscall.RLIM_INFINITY {
 		return fmt.Errorf("Process %s ulimit (%d) of type \"%s\" is lower than required (unlimited)", uc.Type, LimitToCheck, uc.Item)
-	} else if LimitToCheck < uc.Limit {
-		return fmt.Errorf("Process %s ulimit (%d) of type \"%s\" is lower than required (%d)", uc.Type, LimitToCheck, uc.Item, uc.Limit)
+	} else if LimitToCheck < uint64(uc.Value) {
+		return fmt.Errorf("Process %s ulimit (%d) of type \"%s\" is lower than required (%d)", uc.Type, LimitToCheck, uc.Item, uc.Value)
 	}
 
 	return nil
@@ -100,28 +97,20 @@ func (uc UlimitChecker) Check() error {
 // FromArgs will populate the UlimitChecker with the args given in the tests YAML
 // config
 func (uc UlimitChecker) FromArgs(args map[string]interface{}) (Checker, error) {
-	if err := requiredArgs(args, "item"); err != nil {
+	if err := requiredArgs(args, "item", "value"); err != nil {
 		return nil, err
-	}
-
-	if err := requiredArgs(args, "limit"); err != nil {
-		return nil, err
-	}
-
-	if args["limit"] == -1 {
-		args["limit"] = syscall.RLIM_INFINITY
 	}
 
 	if err := decodeFromArgs(args, &uc); err != nil {
 		return nil, err
 	}
 
-	limitType := uc.Type
-	if limitType == "soft" || limitType == "" {
-		uc.IsHard = false
-	} else {
-		uc.IsHard = true
+	if uc.Value == -1 {
+		uc.Value = int(syscall.RLIM_INFINITY)
+	} else if uc.Value < 0 {
+		return nil, fmt.Errorf("negative values other than -1 are invalid, got: %d", uc.Value)
 	}
 
+	uc.IsHard = !(uc.Type == "soft" || uc.Type == "")
 	return uc, nil
 }
