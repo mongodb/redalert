@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+
+	"github.com/google/shlex"
 )
 
 func init() {
@@ -30,10 +32,12 @@ func init() {
 //   source (required): The source code of the script.
 //   compiler: path to the compiler. Default is 'gcc' from the PATH
 //	 cflags: compiles flags, string, e.g "-lss -lsasl2"
+//	 cflags_command: command to get clags, e.g. "net-snmp-config --agent-libs"
 type CompileGcc struct {
-	Source   string
-	Compiler string
-	Cflags   string
+	Source        string
+	Compiler      string
+	Cflags        string
+	CflagsCommand string `mapstructure:"cflags_command"`
 }
 
 // Check Runs a gcc command and checks the return code
@@ -69,6 +73,32 @@ func (cg CompileGcc) Check() error {
 	argv := []string{"-Werror", "-o", outfileName, srcfileName}
 	argv = append(argv, cg.Cflags)
 
+	if cg.CflagsCommand != "" {
+		fields, err := shlex.Split(cg.CflagsCommand)
+		if err != nil {
+			return fmt.Errorf("Problem parsing cflags_command: %s", err)
+		}
+
+		var cmd *exec.Cmd
+
+		switch len(fields) {
+		case 0:
+			return fmt.Errorf("Got unexecutable cflags command: %s", cg.CflagsCommand)
+		case 1:
+			cmd = exec.Command(fields[0])
+		default:
+			cmd = exec.Command(fields[0], fields[1:]...)
+		}
+
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			return fmt.Errorf("Problem running the script: %s: %s", err.Error(), string(out))
+		}
+
+		flags := strings.TrimRight(string(out), "\n")
+		argv = append(argv, strings.Split(flags, " ")...)
+	}
+
 	cmd := exec.Command(cg.Compiler, argv...)
 	out, err := cmd.CombinedOutput()
 
@@ -97,5 +127,10 @@ func (cg CompileGcc) FromArgs(args map[string]interface{}) (Checker, error) {
 	if _, cflagsGiven := args["cflags"]; cg.Cflags == "" && !cflagsGiven {
 		cg.Cflags = ""
 	}
+
+	if _, cflagscommandGiven := args["cflags_command"]; cg.CflagsCommand == "" && !cflagscommandGiven {
+		cg.CflagsCommand = ""
+	}
+
 	return cg, nil
 }

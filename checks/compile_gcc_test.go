@@ -55,6 +55,29 @@ func TestCompileGcc(t *testing.T) {
 			},
 			ShouldError: true,
 		},
+		{
+			Name: "gcc compile hello world with cflags_command",
+			Args: map[string]interface{}{
+				"source": `#include <stdio.h>
+
+				int main() {
+					printf("Hello world!\n");
+				}`,
+				"cflags_command": "/bin/bash -c 'echo -g'",
+			},
+		},
+		{
+			Name: "gcc compile hello world with bad cflags_command",
+			Args: map[string]interface{}{
+				"source": `#include <stdio.h>
+
+				int main() {
+					printf("Hello world!\n");
+				}`,
+				"cflags_command": "/bin/false",
+			},
+			ShouldError: true,
+		},
 	}
 
 	for _, test := range tests {
