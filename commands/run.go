@@ -42,7 +42,6 @@ func init() {
 	Run.Flags().StringVarP(&output, "output", "o", "", "Output format to use. Valid values: text, json, csv. Default: text")
 	Run.Flags().Var(&suites, "suite", "Suite or alias name to run, can be passed multiple times.")
 	Run.Flags().Var(&tests, "test", "Specific test name to run, can be passed multiple times.")
-
 }
 
 // Run will simply run the tests. It takes zero to one arguments. If no arguments
@@ -52,8 +51,8 @@ func init() {
 //
 // It takes the following flags:
 //
-//  - `--quiet` only report test failures
-//  - `--jobs $VALUE` specify the number of parallel tests to run. Default to # of cores
+//  - `--quiet` only report test failures.
+//  - `--jobs $VALUE` specify the number of parallel tests to run. Default to # of cores.
 //  - `--test $TEST_NAME` specify a test by name to run, can be provided multiple times.
 //  - `--suite $SUITE_NAME` which test suite to run, an [alias](#aliases) can be provided as the suite name.
 //    Can be provided multiple times. There is a default "all" alias which matches
@@ -62,12 +61,12 @@ func init() {
 //    If provided the aliases.(yml|yaml) file will not be looked for but aliases in the file will still be loaded.
 //  - `--output $FORMAT` specify the output format. Valid values: text, json, csv. Default: text
 //
-// run will attempt to load an additional file `aliases.(yml|yaml)` which
+// Run will attempt to load an additional file `aliases.(yml|yaml)` which
 // specifies the available [aliases](#aliases). If not found aliases will be
 // looked for as a key in the `tests.(yml|yaml)` according to the
 // [aliases](#aliases) section.
 //
-// run will run tests in parallel.
+// Run will run tests in parallel.
 var Run = &cobra.Command{
 	Use:   "run",
 	Short: "Run tests against this system.",
