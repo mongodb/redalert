@@ -6,6 +6,12 @@ import (
 	"os/exec"
 )
 
+func init() {
+	availableChecks["yum-installed"] = func(args map[string]interface{}) (Checker, error) {
+		return YumInstalled{}.FromArgs(args)
+	}
+}
+
 // YumInstalled checks if an rpm package is installed on the system
 //
 // Type:

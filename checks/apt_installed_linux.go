@@ -5,6 +5,15 @@ import (
 	"os/exec"
 )
 
+func init() {
+	availableChecks["apt-installed"] = func(args map[string]interface{}) (Checker, error) {
+		return AptInstalled{}.FromArgs(args)
+	}
+
+	// alias dpkg-installed to apt-installed for backwards compatibility
+	availableChecks["dpkg-installed"] = availableChecks["apt-installed"]
+}
+
 // AptInstalled checks if an apt/deb package is installed on the system
 //
 // Type:

@@ -6,54 +6,7 @@ import (
 	"github.com/chasinglogic/redalert/testfile"
 )
 
-var availableChecks = map[string]ArgableFunc{
-	"file-exists": func(args map[string]interface{}) (Checker, error) {
-		return FileChecker{}.FromArgs(args)
-	},
-	"file-does-not-exist": func(args map[string]interface{}) (Checker, error) {
-		args["exists"] = false
-		return FileChecker{}.FromArgs(args)
-	},
-	"run-script": func(args map[string]interface{}) (Checker, error) {
-		return RunScript{}.FromArgs(args)
-	},
-	"run-bash-script": func(args map[string]interface{}) (Checker, error) {
-		args["interpreter"] = "/bin/bash"
-		return RunScript{}.FromArgs(args)
-	},
-	"yum-installed": func(args map[string]interface{}) (Checker, error) {
-		return YumInstalled{}.FromArgs(args)
-	},
-	"apt-installed": func(args map[string]interface{}) (Checker, error) {
-		return AptInstalled{}.FromArgs(args)
-	},
-	// Alias for "apt-installed" for backward compatibility
-	"dpkg-installed": func(args map[string]interface{}) (Checker, error) {
-		return AptInstalled{}.FromArgs(args)
-  },
-	"run-python-script": func(args map[string]interface{}) (Checker, error) {
-		args["interpreter"] = "python"
-		return RunScript{}.FromArgs(args)
-	},
-	"run-python2-script": func(args map[string]interface{}) (Checker, error) {
-		args["interpreter"] = "python2"
-		return RunScript{}.FromArgs(args)
-	},
-	"run-python3-script": func(args map[string]interface{}) (Checker, error) {
-		args["interpreter"] = "python3"
-		return RunScript{}.FromArgs(args)
-	},
-	"yum-installed": func(args map[string]interface{}) (Checker, error) {
-		return YumInstalled{}.FromArgs(args)
-	},
-	"apt-installed": func(args map[string]interface{}) (Checker, error) {
-		return AptInstalled{}.FromArgs(args)
-	},
-	// Alias for "apt-installed" for backward compatibility
-	"dpkg-installed": func(args map[string]interface{}) (Checker, error) {
-		return AptInstalled{}.FromArgs(args)
-	},
-}
+var availableChecks = map[string]ArgableFunc{}
 
 // LoadCheck will return the appropriate Checker based on the test type name.
 // As documented on the various checkers

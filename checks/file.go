@@ -5,6 +5,17 @@ import (
 	"os"
 )
 
+func init() {
+	availableChecks["file-exists"] = func(args map[string]interface{}) (Checker, error) {
+		return FileChecker{}.FromArgs(args)
+	}
+
+	availableChecks["file-does-not-exist"] = func(args map[string]interface{}) (Checker, error) {
+		args["exists"] = false
+		return FileChecker{}.FromArgs(args)
+	}
+}
+
 // FileChecker checks if a file exists or does not
 //
 // Type:

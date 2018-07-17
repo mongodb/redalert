@@ -9,6 +9,32 @@ import (
 	"strings"
 )
 
+func init() {
+availableChecks["run-script"] = func(args map[string]interface{}) (Checker, error) {
+		return RunScript{}.FromArgs(args)
+	}
+
+	availableChecks["run-bash-script"] = func(args map[string]interface{}) (Checker, error) {
+		args["interpreter"] = "/bin/bash"
+		return RunScript{}.FromArgs(args)
+	}
+
+	availableChecks["run-python-script"] = func(args map[string]interface{}) (Checker, error) {
+		args["interpreter"] = "python"
+		return RunScript{}.FromArgs(args)
+	}
+
+	availableChecks["run-python2-script"] = func(args map[string]interface{}) (Checker, error) {
+		args["interpreter"] = "python2"
+		return RunScript{}.FromArgs(args)
+	}
+
+	availableChecks["run-python3-script"] = func(args map[string]interface{}) (Checker, error) {
+		args["interpreter"] = "python3"
+		return RunScript{}.FromArgs(args)
+	}
+}
+
 // RunScript runs a bash script and optionally checks output.
 //
 // Type:
