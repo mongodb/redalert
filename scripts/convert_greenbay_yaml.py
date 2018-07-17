@@ -112,7 +112,7 @@ def main():
         redalert_yaml['tests'].append(convert(test))
 
     with open('redalert.yaml', 'w') as ryml:
-        ryml.write(pyaml.dump(redalert_yaml))
+        ryml.write(pyaml.dump(redalert_yaml, vspacing=[2, 1]))
 
 
 if __name__ == '__main__':
