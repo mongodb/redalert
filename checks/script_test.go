@@ -62,7 +62,7 @@ func TestRunScript(t *testing.T) {
 			ShouldError: true,
 		},
 		{
-			Name: "python echo 123 expecting 123",
+			Name: "python print 123 expecting 123",
 			Args: map[string]interface{}{
 				"source":      "print('123')",
 				"interpreter": "python",
@@ -70,7 +70,7 @@ func TestRunScript(t *testing.T) {
 			},
 		},
 		{
-			Name: "python echo 123 expecting 111",
+			Name: "python print 123 expecting 111",
 			Args: map[string]interface{}{
 				"source":      "print('123')",
 				"interpreter": "python",
