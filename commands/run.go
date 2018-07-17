@@ -44,10 +44,11 @@ func init() {
 	Run.Flags().Var(&tests, "test", "Specific test name to run, can be passed multiple times.")
 }
 
-// Run will simply run the tests. It takes zero to one arguments. If no arguments
-// are given it looks for a tests.(yml|yaml) or redalert.(yml|yaml) in the local
-// directory, in `$HOME/.redalert/` (`%APPDATA%` instead of `$HOME` on windows.)
-// and finally in `/etc/redalert/` (`C:\redalert` on windows).
+// Run will simply run the tests. It takes zero to one arguments. If no
+// arguments are given it looks for a tests.(yml|yaml) or redalert.(yml|yaml) in
+// the local directory, in `$HOME/.redalert/` (`%APPDATA%\redalert` instead of
+// `$HOME/.redalert` on windows.) and finally in `/etc/redalert/` (`C:\redalert`
+// on windows).
 //
 // It takes the following flags:
 //
