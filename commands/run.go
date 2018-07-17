@@ -197,21 +197,29 @@ func loadTestFile(path string) (testfile.TestFile, error) {
 	}
 
 	dir := filepath.Dir(path)
-	content, err = ioutil.ReadFile(filepath.Join(dir, "aliases.yml"))
-	if err != nil && !os.IsNotExist(err) {
-		return testfile.TestFile{}, err
-	} else if err != nil && os.IsNotExist(err) {
-		content, err = ioutil.ReadFile(filepath.Join(dir, "aliases.yaml"))
-		if err != nil && os.IsNotExist(err) {
-			return tf, nil
-		} else if err != nil {
+	possibleAliasFiles := []string{
+		filepath.Join(dir, "aliases.yaml"),
+		filepath.Join(dir, "aliases.yml"),
+	}
+
+	var aliasContent []byte
+
+	for _, file := range possibleAliasFiles {
+		aliasContent, err = ioutil.ReadFile(file)
+		if err != nil && !os.IsNotExist(err) {
 			return tf, err
+		} else if err == nil {
+			break
 		}
+	}
+
+	if len(aliasContent) == 0 {
+		return tf, nil
 	}
 
 	var other testfile.TestFile
 
-	err = yaml.Unmarshal(content, &other)
+	err = yaml.Unmarshal(aliasContent, &other)
 	if err != nil {
 		return tf, err
 	}
