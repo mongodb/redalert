@@ -1,18 +1,23 @@
 package checks
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+
+	"golang.org/x/sys/windows/registry"
+)
 
 func init() {
-	availableChecks["registry"] = func(args map[string]interface{}) {
+	availableChecks["registry"] = func(args map[string]interface{}) (Checker, error) {
 		return RegistryKeyChecker{}.FromArgs(args)
 	}
 
-	availableChecks["irp-stack-size"] = func(args map[string]interface{}) {
+	availableChecks["irp-stack-size"] = func(args map[string]interface{}) (Checker, error) {
 		args["root"] = "HKLM"
 		args["path"] = "SYSTEM\\CurrentControlSet\\services\\LanmanServer\\Parameters"
 		args["key"] = "IRPStackSize"
 		args["value_type"] = "DWORD"
-		return nil, nil
+		return RegistryKeyChecker{}.FromArgs(args)
 	}
 }
 
@@ -32,9 +37,6 @@ var rootKeys = map[string]registry.Key{
 
 	"HKEY_USERS": registry.USERS,
 	"HKU":        registry.USERS,
-
-	"HKEY_PERFORMANCE_DATA": registry.PERFORMANCE_DATA,
-	"HKEY_DYN_DATA":         registry.PERFORMANCE_DATA,
 }
 
 // RegistryKeyChecker verifies the value of a given registry key is correct or
@@ -49,14 +51,14 @@ type RegistryKeyChecker struct {
 
 // valueErr is a utility function for printing the key path value and what we expected + got
 func (rkc RegistryKeyChecker) valueErr(value interface{}, expected interface{}) error {
-	return fmt.Errorf("incorrect value for %s:%s\\%s, got: %v expected: %v", rkc.Root, rkc.Path, rkc.Key, val, intValue)
+	return fmt.Errorf("incorrect value for %s:\\%s\\%s, got: %v expected: %v", rkc.Root, rkc.Path, rkc.Key, value, expected)
 }
 
 // Check implements Checker for RegistryKeyChecker
 func (rkc RegistryKeyChecker) Check() error {
 	reg, exists := rootKeys[rkc.Root]
 	if !exists {
-		return fmt.Errorf("%s is not a valid root key, valid root keys can be found here: https://docs.microsoft.com/en-us/windows/desktop/sysinfo/predefined-keys")
+		return fmt.Errorf("%s is not a valid root key, valid root keys can be found here: https://docs.microsoft.com/en-us/windows/desktop/sysinfo/predefined-keys", rkc.Root)
 	}
 
 	key, err := registry.OpenKey(reg, rkc.Path, registry.QUERY_VALUE)
@@ -68,7 +70,7 @@ func (rkc RegistryKeyChecker) Check() error {
 
 	// If no value provided we don't want to check the and opening the key
 	// successfully was enough to verify a success.
-	if rkc.Value == "" {
+	if rkc.Value == nil {
 		return nil
 	}
 
@@ -84,7 +86,7 @@ func (rkc RegistryKeyChecker) Check() error {
 	case rkc.ValueType == "DWORD" || rkc.ValueType == "QWORD":
 		val, _, err := key.GetIntegerValue(rkc.Key)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error getting value for path %s:\\%s\\%s: %s", rkc.Root, rkc.Path, rkc.Key, err)
 		}
 
 		intValue, ok := rkc.Value.(int)
@@ -100,7 +102,7 @@ func (rkc RegistryKeyChecker) Check() error {
 	case rkc.ValueType == "BINARY":
 		val, _, err := key.GetBinaryValue(rkc.Key)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error getting value for path %s:\\%s\\%s: %s", rkc.Root, rkc.Path, rkc.Key, err)
 		}
 
 		strValue, ok := rkc.Value.(string)
@@ -108,7 +110,8 @@ func (rkc RegistryKeyChecker) Check() error {
 			return fmt.Errorf("can only compare %s with a string of binary, got %T", rkc.ValueType, rkc.Value)
 		}
 
-		if []byte(strValue) != val {
+		// not sure if this actually works
+		if strValue != string(val) {
 			return rkc.valueErr(val, []byte(strValue))
 		}
 
@@ -116,7 +119,7 @@ func (rkc RegistryKeyChecker) Check() error {
 	case rkc.ValueType == "SZ" || rkc.ValueType == "EXPAND_SZ":
 		val, _, err := key.GetStringValue(rkc.Key)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error getting value for path %s:\\%s\\%s: %s", rkc.Root, rkc.Path, rkc.Key, err)
 		}
 
 		strValue, ok := rkc.Value.(string)
@@ -132,7 +135,7 @@ func (rkc RegistryKeyChecker) Check() error {
 	case rkc.ValueType == "MULTI_SZ":
 		val, _, err := key.GetStringsValue(rkc.Key)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error getting value for path %s:\\%s\\%s: %s", rkc.Root, rkc.Path, rkc.Key, err)
 		}
 
 		strValues, ok := rkc.Value.([]string)
@@ -141,24 +144,24 @@ func (rkc RegistryKeyChecker) Check() error {
 		}
 
 		if len(strValues) != len(val) {
-			return fmt.valueErr(val, strValues)
+			return rkc.valueErr(val, strValues)
 		}
 
 		for i := range val {
 			if val[i] != strValues[i] {
-				return fmt.valueErr(val, strValues)
+				return rkc.valueErr(val, strValues)
 			}
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("%s is not a known registry key value type", rck.ValueType)
+		return fmt.Errorf("%s is not a known registry key value type", rkc.ValueType)
 	}
 }
 
 // FromArgs implements Argable for RegistryKeyChecker
 func (rkc RegistryKeyChecker) FromArgs(args map[string]interface{}) (Checker, error) {
-	if err := requiredArgs(args, "registry", "key"); err != nil {
+	if err := requiredArgs(args, "root", "path"); err != nil {
 		return nil, err
 	}
 
