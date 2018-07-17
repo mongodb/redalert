@@ -14,8 +14,9 @@ Vagrant.configure("2") do |config|
     ubuntu.vm.box = "ubuntu/bionic64"
     ubuntu.vm.provision "shell", inline: <<-SHELL
     apt-get update
-    apt-get install git golang ruby python -y
+    apt-get install git golang ruby python python-pip -y
     gem install rake
+    pip install pyyaml==3.13
     echo "Creating Directories and linking"
     mkdir -p $HOME/go/src/github.com/chasinglogic
     ln -sf /vagrant $HOME/go/src/github.com/chasinglogic/redalert
@@ -28,6 +29,9 @@ SHELL
     centos.vm.provision "shell", inline: <<-SHELL
     yum install git golang ruby python -y
     gem install rake
+    pip install pyyaml==3.13
+    curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
+    python get-pip.py
     mkdir -p $HOME/go/src/github.com/chasinglogic
     ln -sf /vagrant $HOME/go/src/github.com/chasinglogic/redalert
 SHELL
