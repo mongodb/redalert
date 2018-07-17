@@ -14,10 +14,11 @@ Vagrant.configure("2") do |config|
     ubuntu.vm.box = "ubuntu/bionic64"
     ubuntu.vm.provision "shell", inline: <<-SHELL
     apt-get update
-    apt-get install git golang -y
+    apt-get install git golang ruby python -y
+    gem install rake
     echo "Creating Directories and linking"
     mkdir -p $HOME/go/src/github.com/chasinglogic
-    ln -s /vagrant $HOME/go/src/github.com/chasinglogic/redalert
+    ln -sf /vagrant $HOME/go/src/github.com/chasinglogic/redalert
 SHELL
     ubuntu.vm.provision "test", type: "shell", path: 'scripts/linux_test.sh', env: {'PLATFORM': ENV['PLATFORM']}
   end
@@ -25,9 +26,10 @@ SHELL
   config.vm.define "centos" do |centos|
     centos.vm.box = "centos/7"
     centos.vm.provision "shell", inline: <<-SHELL
-    yum install git golang -y
+    yum install git golang ruby python -y
+    gem install rake
     mkdir -p $HOME/go/src/github.com/chasinglogic
-    ln -s /vagrant $HOME/go/src/github.com/chasinglogic/redalert
+    ln -sf /vagrant $HOME/go/src/github.com/chasinglogic/redalert
 SHELL
     centos.vm.provision "test", type: "shell", path: 'scripts/linux_test.sh', env: {'PLATFORM': ENV['PLATFORM']}
   end
