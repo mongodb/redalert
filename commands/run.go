@@ -155,10 +155,18 @@ func findTestFile() string {
 		filepath.Join(os.Getenv("HOME"), ".redalert", "tests.yaml"),
 		filepath.Join(os.Getenv("APPDATA"), "redalert", "tests.yml"),
 		filepath.Join(os.Getenv("APPDATA"), "redalert", "tests.yaml"),
-		"/etc/redalert.yml",
-		"/etc/redalert.yaml",
-		"C:\\redalert.yml",
-		"C:\\redalert.yaml",
+		filepath.Join(os.Getenv("HOME"), ".redalert", "redalert.yml"),
+		filepath.Join(os.Getenv("HOME"), ".redalert", "redalert.yaml"),
+		filepath.Join(os.Getenv("APPDATA"), "redalert", "redalert.yml"),
+		filepath.Join(os.Getenv("APPDATA"), "redalert", "redalert.yaml"),
+		"/etc/redalert/tests.yml",
+		"/etc/redalert/tests.yaml",
+		"/etc/redalert/redalert.yml",
+		"/etc/redalert/redalert.yaml",
+		"C:\\redalert\\tests.yml",
+		"C:\\redalert\\tests.yaml",
+		"C:\\redalert\\redalert.yml",
+		"C:\\redalert\\redalert.yaml",
 	}
 
 	for _, path := range possiblePaths {
