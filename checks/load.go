@@ -30,6 +30,18 @@ var availableChecks = map[string]ArgableFunc{
 	// Alias for "apt-installed" for backward compatibility
 	"dpkg-installed": func(args map[string]interface{}) (Checker, error) {
 		return AptInstalled{}.FromArgs(args)
+  },
+	"run-python-script": func(args map[string]interface{}) (Checker, error) {
+		args["interpreter"] = "python"
+		return RunScript{}.FromArgs(args)
+	},
+	"run-python2-script": func(args map[string]interface{}) (Checker, error) {
+		args["interpreter"] = "python2"
+		return RunScript{}.FromArgs(args)
+	},
+	"run-python3-script": func(args map[string]interface{}) (Checker, error) {
+		args["interpreter"] = "python3"
+		return RunScript{}.FromArgs(args)
 	},
 }
 
