@@ -1,10 +1,22 @@
 package checks
 
 import (
+	"os/exec"
 	"testing"
 )
 
-func TestRunScript(t *testing.T) {
+func TestRunUnixShellScript(t *testing.T) {
+	// Check if sh in path since it's required
+	_, err := exec.LookPath("sh")
+	if err != nil {
+		return
+	}
+
+	// Check if bash in path since it's required
+	_, err = exec.LookPath("bash")
+	if err != nil {
+		return
+	}
 
 	tests := []struct {
 		Name        string
@@ -61,6 +73,31 @@ func TestRunScript(t *testing.T) {
 			},
 			ShouldError: true,
 		},
+	}
+
+	for _, test := range tests {
+		checker, err := RunScript{}.FromArgs(test.Args)
+		if err != nil {
+			t.Errorf("%s: Unxpected error %s", test.Name, err)
+		}
+
+		err = checker.Check()
+		if err != nil && !test.ShouldError {
+			t.Errorf("%s: Got err when didn't expect one: %s", test.Name, err)
+		} else if err == nil && test.ShouldError {
+			t.Errorf("%s: Didn't get err when expected one: %s", test.Name, err)
+		}
+	}
+
+}
+
+func TestRunPythonScript(t *testing.T) {
+	// Check for python before running these tests
+	if _, err := exec.LookPath("python"); err != nil {
+		return
+	}
+
+	tests := checkerTests{
 		{
 			Name: "python print 123 expecting 123",
 			Args: map[string]interface{}{
