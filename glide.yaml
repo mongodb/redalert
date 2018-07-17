@@ -7,3 +7,6 @@ import:
   version: ^1.0.1
 - package: github.com/go-yaml/yaml
   version: ^2.2.1
+- package: golang.org/x/sys
+  subpackages:
+  - windows/registry

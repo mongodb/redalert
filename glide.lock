@@ -1,5 +1,5 @@
-hash: 5f3b849037a570347eed0b96e5c103698f95a4b72ba49ac3dd34a466ffda08d1
-updated: 2018-07-16T15:18:39.982078247-04:00
+hash: 1ba470838335848ea643b700cbd8390623715276cdea5427158a68acc6388202
+updated: 2018-07-17T11:34:23.707840943-04:00
 imports:
 - name: github.com/go-yaml/yaml
   version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
@@ -11,6 +11,10 @@ imports:
   version: ef82de70bb3f60c65fb8eebacbb2d122ef517385
 - name: github.com/spf13/pflag
   version: 583c0c0531f06d5278b7d917446061adc344b5cd
+- name: golang.org/x/sys
+  version: c200b10b5d5e122be351b67af224adc6128af5bf
+  subpackages:
+  - windows/registry
 - name: gopkg.in/yaml.v2
   version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
 testImports: []
