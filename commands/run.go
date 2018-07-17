@@ -92,6 +92,7 @@ var Run = &cobra.Command{
 			loadedChecks, err := checks.LoadChecks(tests)
 			if err != nil {
 				fmt.Println("ERROR: Unable to load checks:", err)
+				continue
 			}
 
 			checksToRun := make(chan checks.CheckToRun, len(loadedChecks))
