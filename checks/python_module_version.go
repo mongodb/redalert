@@ -39,6 +39,17 @@ type PythonModuleVersion struct {
 	Statement    string
 }
 
+func (pmv PythonModuleVersion) makeStringSemverCompatible(s string) string {
+	switch len(strings.Split(s, ".")) {
+	case 2:
+		return s + ".0"
+	case 1:
+		return s + ".0.0"
+	default:
+		return s
+	}
+}
+
 // Check if a python module is installed on the system and verify version if
 // the Version string is set
 func (pmv PythonModuleVersion) Check() error {
@@ -57,23 +68,18 @@ func (pmv PythonModuleVersion) Check() error {
 		return nil
 	}
 
-	if len(strings.Split(pmv.Version, ".")) < 3 {
-		pmv.Version = pmv.Version + ".0"
-	}
+	pmv.Version = pmv.makeStringSemverCompatible(pmv.Version)
 
 	// strip the newline added by python's print()
 	strippedOutput := strings.TrimRight(string(out), "\n") + ".0"
+	strippedOutput = pmv.makeStringSemverCompatible(strippedOutput)
 
-	if len(strings.Split(strippedOutput, ".")) < 3 {
-		strippedOutput = strippedOutput + ".0"
-	}
-
-	installedVersion, err := semver.Make(strippedOutput)
+	installedVersion, err := semver.Parse(strippedOutput)
 	if err != nil {
-		return fmt.Errorf("Unable to parse semver from python output: %s: %s", string(out), err)
+		return fmt.Errorf("Unable to parse semver from python output: %s: %s", strippedOutput, err)
 	}
 
-	requestedVersion, err := semver.Make(pmv.Version)
+	requestedVersion, err := semver.Parse(pmv.Version)
 	if err != nil {
 		return fmt.Errorf("Unable to parse semver from args: %s", err)
 	}
