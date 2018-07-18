@@ -45,7 +45,7 @@ func LoadChecks(tests []testfile.Test) ([]CheckToRun, error) {
 		checks[i].Name = test.Name
 		checks[i].Checker, err = LoadCheck(test.Type, test.Args)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Error loading check for test %s: %s", test.Name, err)
 		}
 	}
 

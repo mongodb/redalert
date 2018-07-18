@@ -61,8 +61,13 @@ func decodeFromArgs(args map[string]interface{}, into interface{}) error {
 	})
 
 	if err != nil {
-                return fmt.Errorf("Unable to decode %v: %s", args, err)
+		return fmt.Errorf("Unable to create decoder %v: %s", args, err)
 	}
 
-	return decoder.Decode(args)
+	err = decoder.Decode(args)
+	if err != nil {
+		return fmt.Errorf("Unable to decode %v: %s", args, err)
+	}
+
+	return err
 }
