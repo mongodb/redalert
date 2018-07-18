@@ -38,8 +38,8 @@ func TestUlimitsChecks(t *testing.T) {
 		{
 			Name: "stack should fail",
 			Args: map[string]interface{}{
-				"value": int(syscall.RLIM_INFINITY),
-				"item":  "stack",
+				"value": openFilesValue - 1,
+				"item":  "nofile",
 				"type":  "soft",
 			},
 			ShouldError: true,
