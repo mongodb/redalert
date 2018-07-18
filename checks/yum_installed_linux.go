@@ -21,20 +21,20 @@ func init() {
 //   - Linux
 //
 // Arguments:
-//   name (required): A string value that represents the rpm package
+//   package (required): A string value that represents the rpm package
 type YumInstalled struct {
-	Name string
+	Package string
 }
 
 // Check if an rpm is installed on the system
 func (yi YumInstalled) Check() error {
-	out, err := exec.Command("rpm", "-qa", yi.Name).Output()
+	out, err := exec.Command("rpm", "-qa", yi.Package).Output()
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	if len(out) <= 0 {
-		return fmt.Errorf("%s isn't installed and should be", yi.Name)
+		return fmt.Errorf("%s isn't installed and should be", yi.Package)
 	}
 
 	return nil
@@ -43,7 +43,7 @@ func (yi YumInstalled) Check() error {
 // FromArgs will populate the YumInstalled struct with the args given in the tests YAML
 // config
 func (yi YumInstalled) FromArgs(args map[string]interface{}) (Checker, error) {
-	if err := requiredArgs(args, "name"); err != nil {
+	if err := requiredArgs(args, "package"); err != nil {
 		return nil, err
 	}
 

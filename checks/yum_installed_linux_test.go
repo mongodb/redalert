@@ -14,13 +14,13 @@ func TestYumInstalled(t *testing.T) {
 		return
 	}
 
-	err = YumInstalled{Name: "kernel"}.Check()
+	err = YumInstalled{Package: "kernel"}.Check()
 	if err != nil {
 		t.Error(err)
 	}
 
 	// This should fail
-	err = YumInstalled{Name: "DonaldTrump"}.Check()
+	err = YumInstalled{Package: "DonaldTrump"}.Check()
 	if err == nil {
 		t.Error("Got no error, which is the expecte behavior here.")
 	}

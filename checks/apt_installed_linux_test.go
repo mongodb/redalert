@@ -14,13 +14,13 @@ func TestAptInstalled(t *testing.T) {
 		return
 	}
 
-	err = AptInstalled{Name: "linux-base"}.Check()
+	err = AptInstalled{Package: "linux-base"}.Check()
 	if err != nil {
 		t.Error(err)
 	}
 
 	// This should fail
-	err = AptInstalled{Name: "DonaldTrump"}.Check()
+	err = AptInstalled{Package: "DonaldTrump"}.Check()
 	if err == nil {
 		t.Error("Got no error, which is the expected behavior here.")
 	}
