@@ -1,5 +1,6 @@
 language: go
 install:
-  - sudo apt install build-essential python-pip python linux-base
+  - sudo apt update
+  - sudo apt install -y build-essential python-pip python linux-base
   - pip install pyyaml
 script: make unit_test
