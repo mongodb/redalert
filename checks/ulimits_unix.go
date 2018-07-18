@@ -35,8 +35,10 @@ func init() {
 //
 // Arguments:
 //   - item (required): A string value representing the type of limit to check
-//   - value (required): Numerical value representing the minimum value to be tested
+//   - value (required): Numerical value representing the value to be tested
 //   - type: "hard" or "soft" with a default of "hard"
+//   - greater_than: If provided will verify that the limit is greater than or
+//                   equal to value instead of strictly equal to
 //
 // Notes:
 //   - "item" strings are from http://www.linux-pam.org/Linux-PAM-html/sag-pam_limits.html
@@ -50,10 +52,11 @@ func init() {
 //       - as
 //   - "value" can be '-1' to represent that the resource limit should be unlimited
 type UlimitChecker struct {
-	Item   string
-	Value  int
-	IsHard bool
-	Type   string
+	Item        string
+	Value       int
+	IsHard      bool
+	GreaterThan bool `mapstructure:"greater_than"`
+	Type        string
 }
 
 // Map symbolic limit names to rlimit constants
@@ -76,19 +79,22 @@ func (uc UlimitChecker) Check() error {
 		fmt.Println("Error Getting Rlimit ", err)
 	}
 
-	var LimitToCheck uint64
+	var LimitToCheck int
+
 	if uc.IsHard {
 		uc.Type = "hard"
-		LimitToCheck = rLimit.Max
+		LimitToCheck = int(rLimit.Max)
 	} else {
 		uc.Type = "soft"
-		LimitToCheck = rLimit.Cur
+		LimitToCheck = int(rLimit.Cur)
 	}
 
-	if uint64(uc.Value) == syscall.RLIM_INFINITY && LimitToCheck != syscall.RLIM_INFINITY {
+	if uc.Value == int(syscall.RLIM_INFINITY) && LimitToCheck != int(syscall.RLIM_INFINITY) {
 		return fmt.Errorf("Process %s ulimit (%d) of type \"%s\" is lower than required (unlimited)", uc.Type, LimitToCheck, uc.Item)
-	} else if LimitToCheck < uint64(uc.Value) {
+	} else if uc.GreaterThan && !(LimitToCheck < 0 || LimitToCheck > uc.Value) {
 		return fmt.Errorf("Process %s ulimit (%d) of type \"%s\" is lower than required (%d)", uc.Type, LimitToCheck, uc.Item, uc.Value)
+	} else if !uc.GreaterThan && LimitToCheck != uc.Value {
+		return fmt.Errorf("Process %s ulimit (%d) of type \"%s\" is not equal to %d", uc.Type, LimitToCheck, uc.Item, uc.Value)
 	}
 
 	return nil

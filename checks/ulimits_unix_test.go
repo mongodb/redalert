@@ -50,7 +50,7 @@ func TestUlimitsChecks(t *testing.T) {
 
 func TestEveryType(t *testing.T) {
 	for limitName := range limitsByName {
-		err := UlimitChecker{IsHard: false, Item: limitName, Value: 0}.Check()
+		err := UlimitChecker{IsHard: false, Item: limitName, Value: 0, GreaterThan: true}.Check()
 		if err != nil {
 			t.Error(err)
 		}
