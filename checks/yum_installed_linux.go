@@ -28,7 +28,7 @@ type YumInstalled struct {
 
 // Check if an rpm is installed on the system
 func (yi YumInstalled) Check() error {
-	out, err := exec.Command("rpm", "-qa", yi.Package).Output()
+	out, err := exec.Command("yum", "list", "installed", yi.Package).Output()
 	if err != nil {
 		log.Fatal(err)
 	}
