@@ -54,8 +54,8 @@ func TestRunCommand(t *testing.T) {
 
 	defer os.Remove("tests.yml")
 
-	Run.SetArgs([]string{"--suite", "any"})
-	err = Run.Execute()
+	Root.SetArgs([]string{"run", "--suite", "any"})
+	err = Root.Execute()
 	if err != nil {
 		t.Errorf("Error running command: %s", err)
 	}
