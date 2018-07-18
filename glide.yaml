@@ -14,3 +14,4 @@ import:
   version: ^3.5.1
 - package: gopkg.in/yaml.v2
   version: ^2.2.1
+- package: github.com/google/shlex
