@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os/exec"
 	"strings"
+
+	"github.com/blang/semver"
 )
 
 func init() {
@@ -23,36 +25,88 @@ func init() {
 //   - Windows
 //
 // Argument:
-//   name (required): A string value that represents the python module
+//   module (required): A string value that represents the python module
 //   version: An optional version number to check
 //            Leave version blank to just verify module is present
+//   statement: Optional python statement, the result will be passed to print()
+//              Defaults to module.__version__
+//   relationship: Optional comparison operator for the version provided. Valid
+//                 values are lt, lte, gt, gte, eq. Defaults to gte (greater than or equal to)
 type PythonModuleVersion struct {
-	Name    string
-	Version string
+	Module       string
+	Version      string
+	Relationship string
+	Statement    string
 }
 
 // Check if a python module is installed on the system and verify version if
 // the Version string is set
 func (pmv PythonModuleVersion) Check() error {
-	pyCommand := "import " + pmv.Name + "; print(" + pmv.Name + ".__version__)"
+	if pmv.Statement == "" {
+		pmv.Statement = pmv.Module + ".__version__"
+	}
+
+	pyCommand := "import " + pmv.Module + "; print(" + pmv.Statement + ")"
 	out, err := exec.Command("python", "-c", pyCommand).CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("%s isn't installed and should be: %s, %s", pmv.Name, err, string(out))
+		return fmt.Errorf("%s isn't installed and should be: %s, %s", pmv.Module, err, string(out))
 	}
 
-	if len(pmv.Version) >= 1 {
-		if string(pmv.Version) != strings.TrimRight(string(out), "\n") {
-			return fmt.Errorf("%s has version %s and it should be version: %s", pmv.Name, out, pmv.Version)
+	// Don't check semver if not provided
+	if pmv.Version == "" {
+		return nil
+	}
+
+	if len(strings.Split(pmv.Version, ".")) < 3 {
+		pmv.Version = pmv.Version + ".0"
+	}
+
+	// strip the newline added by python's print()
+	strippedOutput := strings.TrimRight(string(out), "\n") + ".0"
+
+	if len(strings.Split(strippedOutput, ".")) < 3 {
+		strippedOutput = strippedOutput + ".0"
+	}
+
+	installedVersion, err := semver.Make(strippedOutput)
+	if err != nil {
+		return fmt.Errorf("Unable to parse semver from python output: %s: %s", string(out), err)
+	}
+
+	requestedVersion, err := semver.Make(pmv.Version)
+	if err != nil {
+		return fmt.Errorf("Unable to parse semver from args: %s", err)
+	}
+
+	switch pmv.Relationship {
+	case "eq":
+		if !requestedVersion.EQ(installedVersion) {
+			return fmt.Errorf("%s is not equal to %s", installedVersion, requestedVersion)
+		}
+	case "lt":
+		if !installedVersion.LT(requestedVersion) {
+			return fmt.Errorf("%s is not less than %s", installedVersion, requestedVersion)
+		}
+	case "lte":
+		if !installedVersion.LTE(requestedVersion) {
+			return fmt.Errorf("%s is not less than or equal to %s", installedVersion, requestedVersion)
+		}
+	case "gt":
+		if !requestedVersion.GT(installedVersion) {
+			return fmt.Errorf("%s is not greater than %s", installedVersion, requestedVersion)
+		}
+	default:
+		if !requestedVersion.GTE(installedVersion) {
+			return fmt.Errorf("%s is not greater than or equal to %s", installedVersion, requestedVersion)
 		}
 	}
-
 	return nil
 }
 
 // FromArgs will populate the PythonModuleVersion struct with the args given in the tests YAML
 // config
 func (pmv PythonModuleVersion) FromArgs(args map[string]interface{}) (Checker, error) {
-	if err := requiredArgs(args, "name"); err != nil {
+	if err := requiredArgs(args, "module"); err != nil {
 		return nil, err
 	}
 

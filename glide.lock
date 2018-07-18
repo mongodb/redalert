@@ -1,6 +1,8 @@
-hash: 1ba470838335848ea643b700cbd8390623715276cdea5427158a68acc6388202
-updated: 2018-07-17T11:34:23.707840943-04:00
+hash: 9410aec5261f0abcea5440053e5b2c19050470f4581ea2d088b005df8e1bbae1
+updated: 2018-07-18T12:14:11.087528881-04:00
 imports:
+- name: github.com/blang/semver
+  version: 2ee87856327ba09384cabd113bc6b5d174e9ec0f
 - name: github.com/go-yaml/yaml
   version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
 - name: github.com/inconshreveable/mousetrap
@@ -14,6 +16,7 @@ imports:
 - name: golang.org/x/sys
   version: c200b10b5d5e122be351b67af224adc6128af5bf
   subpackages:
+  - windows
   - windows/registry
 - name: gopkg.in/yaml.v2
   version: 5420a8b6744d3b0345ab293f6fcba19c978f1183

@@ -10,3 +10,7 @@ import:
 - package: golang.org/x/sys
   subpackages:
   - windows/registry
+- package: github.com/blang/semver
+  version: ^3.5.1
+- package: gopkg.in/yaml.v2
+  version: ^2.2.1

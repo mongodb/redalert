@@ -14,42 +14,49 @@ func TestPythonModuleVersion(t *testing.T) {
 	}
 
 	// Test a module exists, don't specify a version
-	err = PythonModuleVersion{Name: "yaml"}.Check()
+	err = PythonModuleVersion{Module: "yaml"}.Check()
 	if err != nil {
 		t.Error(err)
+		return
 	}
 
 	// A python module you certainly don't want on your system
 	// Don't specify a version
-	err = PythonModuleVersion{Name: "i-am-not-a-python-module-at-all"}.Check()
+	err = PythonModuleVersion{Module: "i-am-not-a-python-module-at-all"}.Check()
 	if err == nil {
 		t.Error("Got no error, which is the expected behavior here.", err)
+		return
 	}
 
 	// Test a module exists and that the version is correct
-	err = PythonModuleVersion{Name: "yaml", Version: "3.13"}.Check()
+	err = PythonModuleVersion{Module: "yaml", Version: "3.13"}.Check()
 	if err != nil {
 		t.Error(err)
+		return
 	}
 
 	// Test a module exists and that the version is correct
-	err = PythonModuleVersion{Name: "yaml", Version: "3.99"}.Check()
+	err = PythonModuleVersion{Module: "yaml", Version: "3.00"}.Check()
 	if err == nil {
 		t.Error("Got no error, which is the expected behavior here.", err)
+		return
 	} // Test a module exists, but the version is incorrect
 
-	checker, err := PythonModuleVersion{}.FromArgs(map[string]interface{}{"name": "yaml"})
+	checker, err := PythonModuleVersion{}.FromArgs(map[string]interface{}{"module": "yaml"})
 	if err != nil {
 		t.Error(err)
+		return
 	}
 
-	checker, err = PythonModuleVersion{}.FromArgs(map[string]interface{}{"name": "yaml", "version": "3.13"})
+	checker, err = PythonModuleVersion{}.FromArgs(map[string]interface{}{"module": "yaml", "version": "3.13"})
 	if err != nil {
 		t.Error(err)
+		return
 	}
 
 	err = checker.Check()
 	if err != nil {
 		t.Error(err)
+		return
 	}
 }
