@@ -31,8 +31,8 @@ func init() {
 // Arguments:
 //   source (required): The source code of the script.
 //   compiler: path to the compiler. Default is 'gcc' from the PATH
-//	 cflags: compiles flags, string, e.g "-lss -lsasl2"
-//	 cflags_command: command to get clags, e.g. "net-snmp-config --agent-libs"
+//   cflags: compiles flags, string, e.g "-lss -lsasl2"
+//   cflags_command: command to get clags, e.g. "net-snmp-config --agent-libs"
 type CompileGcc struct {
 	Source        string
 	Compiler      string
@@ -66,8 +66,9 @@ func (cg CompileGcc) Check() error {
 	if _, err := srcfile.Write(content); err != nil {
 		return fmt.Errorf("Problem writing to a tmpfile: %s", err)
 	}
+
 	if err := srcfile.Close(); err != nil {
-		return fmt.Errorf("Problem closing a tmpfile: %s", err)
+		return fmt.Errorf("Problem closing the tmpfile: %s", err)
 	}
 
 	argv := []string{"-Werror", "-o", outfileName, srcfileName}
@@ -103,7 +104,7 @@ func (cg CompileGcc) Check() error {
 	out, err := cmd.CombinedOutput()
 
 	if err != nil {
-		return fmt.Errorf("Problem running the gcc compile: %s: %s", err.Error(), string(out))
+		return fmt.Errorf("Problem running the gcc compile: %s: %s", err, string(out))
 	}
 
 	return nil
@@ -122,14 +123,6 @@ func (cg CompileGcc) FromArgs(args map[string]interface{}) (Checker, error) {
 
 	if _, compilerGiven := args["compiler"]; cg.Compiler == "" && !compilerGiven {
 		cg.Compiler = "gcc"
-	}
-
-	if _, cflagsGiven := args["cflags"]; cg.Cflags == "" && !cflagsGiven {
-		cg.Cflags = ""
-	}
-
-	if _, cflagscommandGiven := args["cflags_command"]; cg.CflagsCommand == "" && !cflagscommandGiven {
-		cg.CflagsCommand = ""
 	}
 
 	return cg, nil
