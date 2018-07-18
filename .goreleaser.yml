@@ -15,4 +15,32 @@ builds:
     ignore:
       - goos: darwin
         goarch: 386
-        
+
+archive:
+  # Archive name template.
+  # Defaults:
+  # - if format is `tar.gz` or `zip`:
+  #   - `{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}`
+  # - if format is `binary`:
+  #   - `{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}`
+  name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+  replacements:
+    amd64: x86_64
+    386: i386
+
+  wrap_in_directory: true
+
+  format: tar.gz
+
+  format_overrides:
+    - goos: windows
+      format: zip
+
+  # Additional files/globs you want to add to the archive.
+  # Defaults are any files matching `LICENCE*`, `LICENSE*`,
+  # `README*` and `CHANGELOG*` (case-insensitive).
+  files:
+    - LICENSE
+    - README.md
+    - docs/*     
