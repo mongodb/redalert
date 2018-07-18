@@ -23,11 +23,12 @@ type Checker interface {
 
 // RequiredArgError is an error which indicates a required arg was not given
 type RequiredArgError struct {
-	RequiredArg string
+	RequiredArg  string
+	ProvidedArgs map[string]interface{}
 }
 
 func (rae RequiredArgError) Error() string {
-	return fmt.Sprintf("%s is a required arg and was not given", rae.RequiredArg)
+	return fmt.Sprintf("%s is a required arg and was not given: provided args were: %v", rae.RequiredArg, rae.ProvidedArgs)
 }
 
 // IsRequiredArg returns a boolean indicating if the given err is a
@@ -46,7 +47,7 @@ func IsRequiredArg(err error) bool {
 func requiredArgs(args map[string]interface{}, requiredArgs ...string) error {
 	for _, requiredArg := range requiredArgs {
 		if _, ok := args[requiredArg]; !ok {
-			return RequiredArgError{requiredArg}
+			return RequiredArgError{requiredArg, args}
 		}
 	}
 
