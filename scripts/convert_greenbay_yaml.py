@@ -70,6 +70,8 @@ def convert_command_group_all(test):
     test['args']['source'] = '\n'.join(cmds)
     if 'windows' in test['name']:
         test['type'] = 'run-powershell-script'
+    else:
+        test['type'] = 'run-bash-script'
     return test
 
 
