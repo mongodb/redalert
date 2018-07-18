@@ -100,8 +100,6 @@ func (tf TestFile) TestsToRun(suite string) []Test {
 		aliasedSuites = aliases
 	}
 
-	fmt.Println("aliasedSuites", aliasedSuites)
-
 	for _, test := range tf.Tests {
 		if test.Matches(aliasedSuites) {
 			testsToRun = append(testsToRun, test)
