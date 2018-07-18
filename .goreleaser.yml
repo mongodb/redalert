@@ -1,0 +1,18 @@
+# .goreleaser.yml
+
+builds:
+  - binary: redalert
+    goos:
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+      - ppc64le
+      - s390x
+      - 386
+    ignore:
+      - goos: darwin
+        goarch: 386
+        
