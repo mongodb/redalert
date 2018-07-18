@@ -86,7 +86,7 @@ func (pmv PythonModuleVersion) Check() error {
 
 	switch pmv.Relationship {
 	case "eq":
-		if !requestedVersion.EQ(installedVersion) {
+		if !installedVersion.EQ(requestedVersion) {
 			return fmt.Errorf("%s is not equal to %s", installedVersion, requestedVersion)
 		}
 	case "lt":
@@ -98,11 +98,11 @@ func (pmv PythonModuleVersion) Check() error {
 			return fmt.Errorf("%s is not less than or equal to %s", installedVersion, requestedVersion)
 		}
 	case "gt":
-		if !requestedVersion.GT(installedVersion) {
+		if !installedVersion.GT(requestedVersion) {
 			return fmt.Errorf("%s is not greater than %s", installedVersion, requestedVersion)
 		}
 	default:
-		if !requestedVersion.GTE(installedVersion) {
+		if !installedVersion.GTE(requestedVersion) {
 			return fmt.Errorf("%s is not greater than or equal to %s", installedVersion, requestedVersion)
 		}
 	}
