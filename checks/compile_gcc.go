@@ -43,7 +43,6 @@ type CompileGcc struct {
 
 // Check Runs a gcc command and checks the return code
 func (cg CompileGcc) Check() error {
-
 	tmpfolder, err := ioutil.TempDir("", "compileGcc_")
 	if err != nil {
 		return fmt.Errorf("Problem creating a tmpdir: %s", err)
@@ -72,8 +71,16 @@ func (cg CompileGcc) Check() error {
 		return fmt.Errorf("Problem closing the tmpfile: %s", err)
 	}
 
-	argv := []string{"-Werror", "-o", outfileName, srcfileName}
-	argv = append(argv, cg.Cflags)
+	argv := []string{"-Werror", "-o", outfileName}
+
+	if cg.Cflags != "" {
+		flags, err := shlex.Split(cg.Cflags)
+		if err != nil {
+			return fmt.Errorf("Unable to parse cflags: %s", err)
+		}
+
+		argv = append(argv, flags...)
+	}
 
 	if cg.CflagsCommand != "" {
 		fields, err := shlex.Split(cg.CflagsCommand)
@@ -92,15 +99,21 @@ func (cg CompileGcc) Check() error {
 			cmd = exec.Command(fields[0], fields[1:]...)
 		}
 
-		out, err := cmd.CombinedOutput()
+		out, err := cmd.Output()
 		if err != nil {
 			return fmt.Errorf("Problem running the script: %s: %s", err.Error(), string(out))
 		}
 
 		flags := strings.TrimRight(string(out), "\n")
-		argv = append(argv, strings.Split(flags, " ")...)
+		flagArgs, err := shlex.Split(flags)
+		if err != nil {
+			return fmt.Errorf("Problem parsing clfags command output: %s: %s", err, flags)
+		}
+
+		argv = append(argv, flagArgs...)
 	}
 
+	argv = append(argv, srcfileName)
 	cmd := exec.Command(cg.Compiler, argv...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
