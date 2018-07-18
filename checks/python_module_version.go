@@ -71,7 +71,7 @@ func (pmv PythonModuleVersion) Check() error {
 	pmv.Version = pmv.makeStringSemverCompatible(pmv.Version)
 
 	// strip the newline added by python's print()
-	strippedOutput := strings.TrimRight(string(out), "\n") + ".0"
+	strippedOutput := strings.TrimRight(string(out), "\n")
 	strippedOutput = pmv.makeStringSemverCompatible(strippedOutput)
 
 	installedVersion, err := semver.Parse(strippedOutput)
