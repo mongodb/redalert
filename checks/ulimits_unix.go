@@ -72,26 +72,27 @@ var limitsByName = map[string]int{
 
 // Check if a ulimit is high enough
 func (uc UlimitChecker) Check() error {
-	var rLimit syscall.Rlimit
-	err := syscall.Getrlimit(limitsByName[uc.Item], &rLimit)
+	limit, ok := limitsByName[uc.Item]
+	if !ok {
+		return fmt.Errorf("%s is not a valid limit name", uc.Item)
+	}
 
+	var rLimit syscall.Rlimit
+	err := syscall.Getrlimit(limit, &rLimit)
 	if err != nil {
 		fmt.Println("Error Getting Rlimit ", err)
 	}
 
 	var LimitToCheck int
-
 	if uc.IsHard {
-		uc.Type = "hard"
 		LimitToCheck = int(rLimit.Max)
 	} else {
-		uc.Type = "soft"
 		LimitToCheck = int(rLimit.Cur)
 	}
 
 	if uc.Value == int(syscall.RLIM_INFINITY) && LimitToCheck != int(syscall.RLIM_INFINITY) {
 		return fmt.Errorf("Process %s ulimit (%d) of type \"%s\" is lower than required (unlimited)", uc.Type, LimitToCheck, uc.Item)
-	} else if uc.GreaterThan && !(LimitToCheck < 0 || LimitToCheck > uc.Value) {
+	} else if uc.GreaterThan && !(LimitToCheck < 0 || LimitToCheck >= uc.Value) {
 		return fmt.Errorf("Process %s ulimit (%d) of type \"%s\" is lower than required (%d)", uc.Type, LimitToCheck, uc.Item, uc.Value)
 	} else if !uc.GreaterThan && LimitToCheck != uc.Value {
 		return fmt.Errorf("Process %s ulimit (%d) of type \"%s\" is not equal to %d", uc.Type, LimitToCheck, uc.Item, uc.Value)

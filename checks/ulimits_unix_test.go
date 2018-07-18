@@ -19,19 +19,20 @@ func TestUlimitsChecks(t *testing.T) {
 
 	tests := checkerTests{
 		{
-			Name: "check open files",
+			Name: "check open files is equal",
 			Args: map[string]interface{}{
-				"type":  "hard",
-				"item":  "files",
+				"type":  "soft",
+				"item":  "nofile",
 				"value": openFilesValue,
 			},
 		},
 		{
 			Name: "check open files is wrong value",
 			Args: map[string]interface{}{
-				"type":  "hard",
-				"item":  "files",
-				"value": openFilesValue - 1,
+				"type":         "hard",
+				"item":         "nofile",
+				"value":        openFilesValue - 1,
+				"greater_than": true,
 			},
 		},
 		{
@@ -77,13 +78,13 @@ func TestArgBuilding(t *testing.T) {
 		},
 		{
 			Args: map[string]interface{}{
-				"item":  "files",
+				"item":  "nofile",
 				"type":  "hard",
 				"value": -1,
 			},
 			Expected: UlimitChecker{
 				IsHard: true,
-				Item:   "files",
+				Item:   "nofile",
 				Type:   "hard",
 				Value:  int(syscall.RLIM_INFINITY),
 			},
@@ -117,13 +118,13 @@ func TestSoftHard(t *testing.T) {
 		t.Error(err)
 	}
 
-	err = UlimitChecker{IsHard: true, Item: "files", Value: int(rLimit.Max - 1)}.Check()
+	err = UlimitChecker{IsHard: true, Item: "nofile", GreaterThan: true, Value: int(rLimit.Max - 1)}.Check()
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	err = UlimitChecker{IsHard: false, Item: "files", Value: int(rLimit.Cur - 1)}.Check()
+	err = UlimitChecker{IsHard: false, Item: "nofile", GreaterThan: true, Value: int(rLimit.Cur - 1)}.Check()
 
 	if err != nil {
 		t.Error(err)
