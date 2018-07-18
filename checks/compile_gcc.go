@@ -38,6 +38,7 @@ type CompileGcc struct {
 	Compiler      string
 	Cflags        string
 	CflagsCommand string `mapstructure:"cflags_command"`
+	Run           bool
 }
 
 // Check Runs a gcc command and checks the return code
@@ -102,9 +103,16 @@ func (cg CompileGcc) Check() error {
 
 	cmd := exec.Command(cg.Compiler, argv...)
 	out, err := cmd.CombinedOutput()
-
 	if err != nil {
 		return fmt.Errorf("Problem running the gcc compile: %s: %s", err, string(out))
+	}
+
+	if cg.Run {
+		cmd = exec.Command(outfileName)
+		out, err = cmd.CombinedOutput()
+		if err != nil {
+			return fmt.Errorf("Problem running compiled executable: %s: %s", err, string(out))
+		}
 	}
 
 	return nil
