@@ -85,7 +85,7 @@ func TestCompileGcc(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		checker, err := CompileGcc{}.FromArgs(test.Args)
+		checker, err := CompileGccFromArgs(test.Args)
 		if err != nil {
 			t.Errorf("%s: Unxpected error %s", test.Name, err)
 		}

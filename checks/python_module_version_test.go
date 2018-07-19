@@ -46,13 +46,13 @@ func TestPythonModuleVersion(t *testing.T) {
 		return
 	} // Test a module exists, but the version is incorrect
 
-	checker, err := PythonModuleVersion{}.FromArgs(Args{"module": "yaml"})
+	checker, err := PythonModuleVersionFromArgs(Args{"module": "yaml"})
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	checker, err = PythonModuleVersion{}.FromArgs(Args{"module": "yaml", "version": "3.13"})
+	checker, err = PythonModuleVersionFromArgs(Args{"module": "yaml", "version": "3.13"})
 	if err != nil {
 		t.Error(err)
 		return
