@@ -29,7 +29,7 @@ func TestAptInstalled(t *testing.T) {
 		t.Error("Got no error, which is the expected behavior here.")
 	}
 
-	checker, err := AptInstalled{}.FromArgs(Args{"name": "linux-base"})
+	checker, err := AptInstalledFromArgs(Args{"name": "linux-base"})
 	if err != nil {
 		t.Error(err)
 	}

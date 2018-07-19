@@ -80,7 +80,7 @@ func TestRunUnixShellScript(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		checker, err := RunScript{}.FromArgs(test.Args)
+		checker, err := RunScriptFromArgs(test.Args)
 		if err != nil {
 			t.Errorf("%s: Unxpected error %s", test.Name, err)
 		}
@@ -153,7 +153,7 @@ print(datetime.date.today())`,
 	}
 
 	for _, test := range tests {
-		checker, err := RunScript{}.FromArgs(test.Args)
+		checker, err := RunScriptFromArgs(test.Args)
 		if err != nil {
 			t.Errorf("%s: Unxpected error %s", test.Name, err)
 		}

@@ -98,7 +98,7 @@ func TestArgBuilding(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		arged, err := UlimitChecker{}.FromArgs(test.Args)
+		arged, err := UlimitCheckerFromArgs(test.Args)
 		if err != nil {
 			t.Error(err)
 		}
