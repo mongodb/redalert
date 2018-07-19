@@ -23,7 +23,7 @@ func TestFileExists(t *testing.T) {
 		t.Error(err)
 	}
 
-	checker, err := FileCheckerFromArgs(Args{"name": "test_exists.txt"})
+	checker, err := FileChecker{}.FromArgs(Args{"name": "test_exists.txt"})
 	if err != nil {
 		t.Error(err)
 	}
@@ -40,7 +40,7 @@ func TestFileNotExists(t *testing.T) {
 		t.Error(err)
 	}
 
-	checker, err := FileCheckerFromArgs(Args{"name": "test_not_exists.txt", "exists": false})
+	checker, err := FileChecker{}.FromArgs(Args{"name": "test_not_exists.txt", "exists": false})
 	if err != nil {
 		t.Error(err)
 	}

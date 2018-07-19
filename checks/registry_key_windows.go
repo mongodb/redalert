@@ -12,7 +12,9 @@ import (
 )
 
 func init() {
-	availableChecks["registry"] = RegistryKeyCheckerFromArgs
+	availableChecks["registry"] = func(args Args) (Checker, error) {
+		return RegistryKeyChecker{}.FromArgs(args)
+	}
 
 	availableChecks["irp-stack-size"] = func(args Args) (Checker, error) {
 		args["root"] = "HKLM"
@@ -162,9 +164,7 @@ func (rkc RegistryKeyChecker) Check() error {
 }
 
 // FromArgs implements Argable for RegistryKeyChecker
-func RegistryKeyCheckerFromArgs(args Args) (Checker, error) {
-	rkc := RegistryKeyChecker{}
-
+func (rkc RegistryKeyChecker) FromArgs(args Args) (Checker, error) {
 	if err := requiredArgs(args, "root", "path"); err != nil {
 		return nil, err
 	}

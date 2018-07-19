@@ -12,8 +12,9 @@ import (
 )
 
 func init() {
-	availableChecks["pip-installed"] = PipInstalledFromArgs
-	availableChecks["python-module-version"] = availableChecks["pip-installed"]
+	availableChecks["python-module-version"] = func(args Args) (Checker, error) {
+		return PythonModuleVersion{}.FromArgs(args)
+	}
 }
 
 // PipInstalled checks if python module is installed on the system
@@ -136,9 +137,7 @@ func (pmv PipInstalled) Check() error {
 
 // FromArgs will populate the PipInstalled struct with the args given in the tests YAML
 // config
-func PipInstalledFromArgs(args Args) (Checker, error) {
-	pmv := PipInstalled{}
-
+func (pmv PythonModuleVersion) FromArgs(args Args) (Checker, error) {
 	if err := requiredArgs(args, "module"); err != nil {
 		return nil, err
 	}

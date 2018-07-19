@@ -33,5 +33,13 @@ func TestAptInstalled(t *testing.T) {
 		}
 	}
 
-	runCheckerTests(t, tests, availableChecks["apt-installed"])
+	checker, err := AptInstalled{}.FromArgs(Args{"name": "linux-base"})
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = checker.Check()
+	if err != nil {
+		t.Error(err)
+	}
 }

@@ -21,7 +21,11 @@ func TestRunUnixShellScript(t *testing.T) {
 		return
 	}
 
-	tests := checkerTests{
+	tests := []struct {
+		Name        string
+		Args        Args
+		ShouldError bool
+	}{
 		{
 			Name: "exit 0 check for exit code",
 			Args: Args{
@@ -87,28 +91,32 @@ func TestRunPythonScript(t *testing.T) {
 		{
 			Name: "python print 123 expecting 123",
 			Args: Args{
-				"source": "print('123')",
-				"output": "123",
+				"source":      "print('123')",
+				"interpreter": "python",
+				"output":      "123",
 			},
 		},
 		{
 			Name: "python print 123 expecting 111",
 			Args: Args{
-				"source": "print('123')",
-				"output": "111",
+				"source":      "print('123')",
+				"interpreter": "python",
+				"output":      "111",
 			},
 			ShouldError: true,
 		},
 		{
 			Name: "python exit 0 check for exit code",
 			Args: Args{
-				"source": "exit(0)",
+				"source":      "exit(0)",
+				"interpreter": "python",
 			},
 		},
 		{
 			Name: "python exit 1 check for exit code",
 			Args: Args{
-				"source": "exit(1)",
+				"source":      "exit(1)",
+				"interpreter": "python",
 			},
 			ShouldError: true,
 		},
@@ -122,7 +130,8 @@ print(datetime.date.today())`,
 		{
 			Name: "python import bad module check exit code",
 			Args: Args{
-				"source": "import datetimes",
+				"source":      "import datetimes",
+				"interpreter": "python",
 			},
 			ShouldError: true,
 		},

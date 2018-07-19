@@ -14,7 +14,9 @@ import (
 )
 
 func init() {
-	availableChecks["run-script"] = RunScriptFromArgs
+	availableChecks["run-script"] = func(args Args) (Checker, error) {
+		return RunScript{}.FromArgs(args)
+	}
 
 	availableChecks["run-bash-script"] = func(args Args) (Checker, error) {
 		args["interpreter"] = "/bin/bash"
@@ -98,9 +100,7 @@ func (rs RunScript) Check() error {
 
 // FromArgs will populate the RunScript with the args given in the tests YAML
 // config
-func RunScriptFromArgs(args Args) (Checker, error) {
-	rs := RunScript{}
-
+func (rs RunScript) FromArgs(args Args) (Checker, error) {
 	if err := requiredArgs(args, "source"); err != nil {
 		return nil, err
 	}

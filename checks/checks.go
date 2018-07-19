@@ -13,9 +13,15 @@ import (
 // Args is a convenience type to express the "args" key in the test yaml
 type Args map[string]interface{}
 
-// ArgFunc is a function which takes the raw yaml test args and converts
-// them into a Checker
-type ArgFunc func(args Args) (Checker, error)
+// ArgableFunc is a function which modifies arguments before passing them to an
+// Argable
+type ArgableFunc func(args Args) (Checker, error)
+
+// Argable is any struct which can create a Checker from the YAML args we get
+// back from a test block.
+type Argable interface {
+	FromArgs(args Args) (Checker, error)
+}
 
 // Checker is any struct that performs a system check
 type Checker interface {

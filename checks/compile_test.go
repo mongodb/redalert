@@ -9,7 +9,11 @@ import (
 
 func TestCompileChecker(t *testing.T) {
 
-	tests := checkerTests{
+	tests := []struct {
+		Name        string
+		Args        Args
+		ShouldError bool
+	}{
 		{
 			Name: "gcc compile hello world",
 			Args: Args{

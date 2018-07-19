@@ -55,5 +55,28 @@ func TestPythonModuleVersion(t *testing.T) {
 		},
 	}
 
-	runCheckerTests(t, tests, availableChecks["pip-installed"])
+	// Test a module exists and that the version is correct
+	err = PythonModuleVersion{Module: "yaml", Version: "3.00"}.Check()
+	if err == nil {
+		t.Error("Got no error, which is the expected behavior here.", err)
+		return
+	} // Test a module exists, but the version is incorrect
+
+	checker, err := PythonModuleVersion{}.FromArgs(Args{"module": "yaml"})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	checker, err = PythonModuleVersion{}.FromArgs(Args{"module": "yaml", "version": "3.13"})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	err = checker.Check()
+	if err != nil {
+		t.Error(err)
+		return
+	}
 }

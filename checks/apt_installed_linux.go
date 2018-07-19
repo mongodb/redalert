@@ -10,7 +10,10 @@ import (
 )
 
 func init() {
-	availableChecks["apt-installed"] = AptInstalledFromArgs
+	availableChecks["apt-installed"] = func(args Args) (Checker, error) {
+		return AptInstalled{}.FromArgs(args)
+	}
+
 	// alias dpkg-installed to apt-installed for backwards compatibility
 	availableChecks["dpkg-installed"] = availableChecks["apt-installed"]
 }
@@ -43,11 +46,9 @@ func (ai AptInstalled) Check() error {
 	return nil
 }
 
-// AptInstalledFromArgs will populate the AptInstalled struct with the args
-// given in the tests YAML config
-func AptInstalledFromArgs(args Args) (Checker, error) {
-	ai := AptInstalled{}
-
+// FromArgs will populate the AptInstalled struct with the args given in the tests YAML
+// config
+func (ai AptInstalled) FromArgs(args Args) (Checker, error) {
 	if err := requiredArgs(args, "package"); err != nil {
 		return nil, err
 	}

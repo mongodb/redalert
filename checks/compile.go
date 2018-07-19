@@ -17,7 +17,7 @@ import (
 )
 
 func init() {
-	availableChecks["compile"] = func(args map[string]interface{}) (Checker, error) {
+	availableChecks["compile"] = func(args Args) (Checker, error) {
 		return CompileChecker{}.FromArgs(args)
 	}
 }
@@ -143,7 +143,7 @@ func (cg CompileChecker) Check() error {
 
 // FromArgs will populate the CompileChecker with the args given in the tests YAML
 // config
-func (cg CompileChecker) FromArgs(args map[string]interface{}) (Checker, error) {
+func (cg CompileChecker) FromArgs(args Args) (Checker, error) {
 	if err := requiredArgs(args, "source"); err != nil {
 		return nil, err
 	}

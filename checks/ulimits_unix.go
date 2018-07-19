@@ -12,7 +12,9 @@ import (
 )
 
 func init() {
-	availableChecks["ulimit"] = UlimitCheckerFromArgs
+	availableChecks["ulimit"] = func(args Args) (Checker, error) {
+		return UlimitChecker{}.FromArgs(args)
+	}
 
 	// Legacy greenbay types
 	availableChecks["open-files"] = func(args Args) (Checker, error) {
@@ -107,9 +109,7 @@ func (uc UlimitChecker) Check() error {
 
 // FromArgs will populate the UlimitChecker with the args given in the tests YAML
 // config
-func UlimitCheckerFromArgs(args Args) (Checker, error) {
-	uc := UlimitChecker{}
-
+func (uc UlimitChecker) FromArgs(args Args) (Checker, error) {
 	if err := requiredArgs(args, "item", "value"); err != nil {
 		return nil, err
 	}

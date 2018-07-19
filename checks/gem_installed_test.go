@@ -32,5 +32,19 @@ func TestGemInstalled(t *testing.T) {
 		},
 	}
 
-	runCheckerTests(t, tests, availableChecks["gem-installed"])
+	// A gem you certainly don't want on your system
+	err = GemInstalled{Name: "i-am-not-a-gem-at-all"}.Check()
+	if err == nil {
+		t.Error("Got no error, which is the expected behavior here.")
+	}
+
+	checker, err := GemInstalled{}.FromArgs(Args{"name": "rake"})
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = checker.Check()
+	if err != nil {
+		t.Error(err)
+	}
 }

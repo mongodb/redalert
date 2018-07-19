@@ -33,5 +33,19 @@ func TestYumInstalled(t *testing.T) {
 		},
 	}
 
-	runCheckerTests(t, tests, availableChecks["yum-installed"])
+	// This should fail
+	err = YumInstalled{Package: "DonaldTrump"}.Check()
+	if err == nil {
+		t.Error("Got no error, which is the expecte behavior here.")
+	}
+
+	checker, err := YumInstalled{}.FromArgs(Args{"name": "kernel"})
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = checker.Check()
+	if err != nil {
+		t.Error(err)
+	}
 }

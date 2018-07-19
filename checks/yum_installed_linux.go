@@ -11,7 +11,9 @@ import (
 )
 
 func init() {
-	availableChecks["yum-installed"] = YumInstalledFromArgs
+	availableChecks["yum-installed"] = func(args Args) (Checker, error) {
+		return YumInstalled{}.FromArgs(args)
+	}
 }
 
 // YumInstalled checks if an rpm package is installed on the system
@@ -42,11 +44,9 @@ func (yi YumInstalled) Check() error {
 	return nil
 }
 
-// YumInstalledFromArgs will populate the YumInstalled struct with the args
-// given in the tests YAML config
-func YumInstalledFromArgs(args Args) (Checker, error) {
-	yi := YumInstalled{}
-
+// FromArgs will populate the YumInstalled struct with the args given in the tests YAML
+// config
+func (yi YumInstalled) FromArgs(args Args) (Checker, error) {
 	if err := requiredArgs(args, "package"); err != nil {
 		return nil, err
 	}
