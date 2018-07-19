@@ -13,9 +13,7 @@ import (
 )
 
 func init() {
-	availableChecks["compile-gcc"] = func(args Args) (Checker, error) {
-		return CompileGcc{}.FromArgs(args)
-	}
+	availableChecks["compile-gcc"] = CompileGccFromArgs
 }
 
 // CompileGcc runs gcc compile.
@@ -131,9 +129,11 @@ func (cg CompileGcc) Check() error {
 	return nil
 }
 
-// FromArgs will populate the CompileGcc with the args given in the tests YAML
-// config
-func (cg CompileGcc) FromArgs(args Args) (Checker, error) {
+// CompileGccFromArgs will populate the CompileGcc with the args given in the
+// tests YAML config
+func CompileGccFromArgs(args Args) (Checker, error) {
+	cg := CompileGcc{}
+
 	if err := requiredArgs(args, "source"); err != nil {
 		return nil, err
 	}

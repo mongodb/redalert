@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-var availableChecks = map[string]ArgableFunc{}
+var availableChecks = map[string]ArgFunc{}
 
 // LoadCheck will return the appropriate Checker based on the test type name.
 // As documented on the various checkers

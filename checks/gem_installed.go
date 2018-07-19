@@ -7,9 +7,7 @@ import (
 )
 
 func init() {
-	availableChecks["gem-installed"] = func(args Args) (Checker, error) {
-		return GemInstalled{}.FromArgs(args)
-	}
+	availableChecks["gem-installed"] = GemInstalledFromArgs
 }
 
 // GemInstalled checks if ruby gem is installed on the system
@@ -58,7 +56,9 @@ func (gi GemInstalled) Check() error {
 
 // FromArgs will populate the GemInstalled struct with the args given in the tests YAML
 // config
-func (gi GemInstalled) FromArgs(args Args) (Checker, error) {
+func GemInstalledFromArgs(args Args) (Checker, error) {
+	gi := GemInstalled{}
+
 	if err := requiredArgs(args, "name"); err != nil {
 		return nil, err
 	}

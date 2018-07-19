@@ -10,28 +10,26 @@ import (
 )
 
 func init() {
-	availableChecks["run-script"] = func(args Args) (Checker, error) {
-		return RunScript{}.FromArgs(args)
-	}
+	availableChecks["run-script"] = RunScriptFromArgs
 
 	availableChecks["run-bash-script"] = func(args Args) (Checker, error) {
 		args["interpreter"] = "/bin/bash"
-		return RunScript{}.FromArgs(args)
+		return RunScriptFromArgs(args)
 	}
 
 	availableChecks["run-python-script"] = func(args Args) (Checker, error) {
 		args["interpreter"] = "python"
-		return RunScript{}.FromArgs(args)
+		return RunScriptFromArgs(args)
 	}
 
 	availableChecks["run-python2-script"] = func(args Args) (Checker, error) {
 		args["interpreter"] = "python2"
-		return RunScript{}.FromArgs(args)
+		return RunScriptFromArgs(args)
 	}
 
 	availableChecks["run-python3-script"] = func(args Args) (Checker, error) {
 		args["interpreter"] = "python3"
-		return RunScript{}.FromArgs(args)
+		return RunScriptFromArgs(args)
 	}
 }
 
@@ -96,7 +94,9 @@ func (rs RunScript) Check() error {
 
 // FromArgs will populate the RunScript with the args given in the tests YAML
 // config
-func (rs RunScript) FromArgs(args Args) (Checker, error) {
+func RunScriptFromArgs(args Args) (Checker, error) {
+	rs := RunScript{}
+
 	if err := requiredArgs(args, "source"); err != nil {
 		return nil, err
 	}

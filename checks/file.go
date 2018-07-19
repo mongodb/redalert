@@ -6,13 +6,11 @@ import (
 )
 
 func init() {
-	availableChecks["file-exists"] = func(args Args) (Checker, error) {
-		return FileChecker{}.FromArgs(args)
-	}
+	availableChecks["file-exists"] = FileCheckerFromArgs
 
 	availableChecks["file-does-not-exist"] = func(args Args) (Checker, error) {
 		args["exists"] = false
-		return FileChecker{}.FromArgs(args)
+		return FileCheckerFromArgs(args)
 	}
 }
 
@@ -59,7 +57,9 @@ func (fc FileChecker) Check() error {
 
 // FromArgs will populate the FileChecker with the args given in the tests YAML
 // config
-func (fc FileChecker) FromArgs(args Args) (Checker, error) {
+func FileCheckerFromArgs(args Args) (Checker, error) {
+	fc := FileChecker{}
+
 	if err := requiredArgs(args, "name"); err != nil {
 		return nil, err
 	}
