@@ -9,9 +9,7 @@ import (
 )
 
 func init() {
-	availableChecks["python-module-version"] = func(args Args) (Checker, error) {
-		return PythonModuleVersion{}.FromArgs(args)
-	}
+	availableChecks["python-module-version"] = PythonModuleVersionFromArgs
 }
 
 // PythonModuleVersion checks if python module is installed on the system
@@ -111,7 +109,9 @@ func (pmv PythonModuleVersion) Check() error {
 
 // FromArgs will populate the PythonModuleVersion struct with the args given in the tests YAML
 // config
-func (pmv PythonModuleVersion) FromArgs(args Args) (Checker, error) {
+func PythonModuleVersionFromArgs(args Args) (Checker, error) {
+	pmv := PythonModuleVersion{}
+
 	if err := requiredArgs(args, "module"); err != nil {
 		return nil, err
 	}

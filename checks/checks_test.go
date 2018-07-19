@@ -11,7 +11,7 @@ type checkerTest struct {
 
 type checkerTests []checkerTest
 
-func runCheckerTests(t *testing.T, tests checkerTests, argable ArgableFunc) {
+func runCheckerTests(t *testing.T, tests checkerTests, argable ArgFunc) {
 	for _, test := range tests {
 		checker, err := argable(test.Args)
 		if err != nil && test.ShouldError {
