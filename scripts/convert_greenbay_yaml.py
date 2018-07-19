@@ -1,3 +1,7 @@
+# Copyright 2018 Mathew Robinson <chasinglogic@gmail.com>. All rights reserved. Use of this source code is
+# governed by the Apache-2.0 license that can be found in the LICENSE file.
+
+
 #!/usr/bin/env python3
 """This source codifies our deprecations and argument modifications to the
 Greenbay.yaml format. It takes a single argument: the path to the greenbay.yaml and will create a redalert.yaml from it."""
