@@ -25,7 +25,7 @@ func TestYumInstalled(t *testing.T) {
 		t.Error("Got no error, which is the expecte behavior here.")
 	}
 
-	checker, err := YumInstalled{}.FromArgs(map[string]interface{}{"name": "kernel"})
+	checker, err := YumInstalled{}.FromArgs(Args{"name": "kernel"})
 	if err != nil {
 		t.Error(err)
 	}

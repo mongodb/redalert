@@ -10,26 +10,26 @@ import (
 )
 
 func init() {
-availableChecks["run-script"] = func(args map[string]interface{}) (Checker, error) {
+	availableChecks["run-script"] = func(args Args) (Checker, error) {
 		return RunScript{}.FromArgs(args)
 	}
 
-	availableChecks["run-bash-script"] = func(args map[string]interface{}) (Checker, error) {
+	availableChecks["run-bash-script"] = func(args Args) (Checker, error) {
 		args["interpreter"] = "/bin/bash"
 		return RunScript{}.FromArgs(args)
 	}
 
-	availableChecks["run-python-script"] = func(args map[string]interface{}) (Checker, error) {
+	availableChecks["run-python-script"] = func(args Args) (Checker, error) {
 		args["interpreter"] = "python"
 		return RunScript{}.FromArgs(args)
 	}
 
-	availableChecks["run-python2-script"] = func(args map[string]interface{}) (Checker, error) {
+	availableChecks["run-python2-script"] = func(args Args) (Checker, error) {
 		args["interpreter"] = "python2"
 		return RunScript{}.FromArgs(args)
 	}
 
-	availableChecks["run-python3-script"] = func(args map[string]interface{}) (Checker, error) {
+	availableChecks["run-python3-script"] = func(args Args) (Checker, error) {
 		args["interpreter"] = "python3"
 		return RunScript{}.FromArgs(args)
 	}
@@ -96,7 +96,7 @@ func (rs RunScript) Check() error {
 
 // FromArgs will populate the RunScript with the args given in the tests YAML
 // config
-func (rs RunScript) FromArgs(args map[string]interface{}) (Checker, error) {
+func (rs RunScript) FromArgs(args Args) (Checker, error) {
 	if err := requiredArgs(args, "source"); err != nil {
 		return nil, err
 	}

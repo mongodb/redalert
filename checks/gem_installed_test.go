@@ -25,7 +25,7 @@ func TestGemInstalled(t *testing.T) {
 		t.Error("Got no error, which is the expected behavior here.")
 	}
 
-	checker, err := GemInstalled{}.FromArgs(map[string]interface{}{"name": "rake"})
+	checker, err := GemInstalled{}.FromArgs(Args{"name": "rake"})
 	if err != nil {
 		t.Error(err)
 	}

@@ -22,7 +22,7 @@ func TestUlimitsChecks(t *testing.T) {
 	tests := checkerTests{
 		{
 			Name: "check open files is equal",
-			Args: map[string]interface{}{
+			Args: Args{
 				"type":  "soft",
 				"item":  "nofile",
 				"value": openFilesValue,
@@ -30,7 +30,7 @@ func TestUlimitsChecks(t *testing.T) {
 		},
 		{
 			Name: "check open files is wrong value",
-			Args: map[string]interface{}{
+			Args: Args{
 				"type":         "hard",
 				"item":         "nofile",
 				"value":        openFilesValue - 1,
@@ -39,7 +39,7 @@ func TestUlimitsChecks(t *testing.T) {
 		},
 		{
 			Name: "stack should fail",
-			Args: map[string]interface{}{
+			Args: Args{
 				"value": openFilesValue - 1,
 				"item":  "nofile",
 				"type":  "soft",
@@ -62,11 +62,11 @@ func TestEveryType(t *testing.T) {
 
 func TestArgBuilding(t *testing.T) {
 	tests := []struct {
-		Args     map[string]interface{}
+		Args     Args
 		Expected UlimitChecker
 	}{
 		{
-			Args: map[string]interface{}{
+			Args: Args{
 				"item":  "as",
 				"type":  "soft",
 				"value": 1024,
@@ -79,7 +79,7 @@ func TestArgBuilding(t *testing.T) {
 			},
 		},
 		{
-			Args: map[string]interface{}{
+			Args: Args{
 				"item":  "nofile",
 				"type":  "hard",
 				"value": -1,
@@ -135,14 +135,14 @@ func TestSoftHard(t *testing.T) {
 }
 
 func TestLegacyTypes(t *testing.T) {
-	checker, _ := availableChecks["open-files"](map[string]interface{}{"value": 1024})
+	checker, _ := availableChecks["open-files"](Args{"value": 1024})
 	equivalentChecker := UlimitChecker{IsHard: true, Item: "nofile", Value: 1024, Type: "hard"}
 
 	if checker != equivalentChecker {
 		t.Errorf("Legacy conversion failed (%+v != %+v)", checker, equivalentChecker)
 	}
 
-	checker, _ = availableChecks["address-size"](map[string]interface{}{"value": 1024})
+	checker, _ = availableChecks["address-size"](Args{"value": 1024})
 	equivalentChecker = UlimitChecker{IsHard: true, Item: "as", Value: 1024, Type: "hard"}
 
 	if checker != equivalentChecker {

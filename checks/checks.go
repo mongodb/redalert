@@ -6,14 +6,17 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
+// Args is a convenience type to express the "args" key in the test yaml
+type Args map[string]interface{}
+
 // ArgableFunc is a function which modifies arguments before passing them to an
 // Argable
-type ArgableFunc func(args map[string]interface{}) (Checker, error)
+type ArgableFunc func(args Args) (Checker, error)
 
 // Argable is any struct which can create a Checker from the YAML args we get
 // back from a test block.
 type Argable interface {
-	FromArgs(args map[string]interface{}) (Checker, error)
+	FromArgs(args Args) (Checker, error)
 }
 
 // Checker is any struct that performs a system check
@@ -24,7 +27,7 @@ type Checker interface {
 // RequiredArgError is an error which indicates a required arg was not given
 type RequiredArgError struct {
 	RequiredArg  string
-	ProvidedArgs map[string]interface{}
+	ProvidedArgs Args
 }
 
 func (rae RequiredArgError) Error() string {
@@ -44,7 +47,7 @@ func IsRequiredArg(err error) bool {
 	}
 }
 
-func requiredArgs(args map[string]interface{}, requiredArgs ...string) error {
+func requiredArgs(args Args, requiredArgs ...string) error {
 	for _, requiredArg := range requiredArgs {
 		if _, ok := args[requiredArg]; !ok {
 			return RequiredArgError{requiredArg, args}
@@ -54,7 +57,7 @@ func requiredArgs(args map[string]interface{}, requiredArgs ...string) error {
 	return nil
 }
 
-func decodeFromArgs(args map[string]interface{}, into interface{}) error {
+func decodeFromArgs(args Args, into interface{}) error {
 	decoder, err := mapstructure.NewDecoder(&mapstructure.DecoderConfig{
 		ErrorUnused: true,
 		Result:      into,

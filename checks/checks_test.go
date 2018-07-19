@@ -4,7 +4,7 @@ import "testing"
 
 type checkerTest struct {
 	Name        string
-	Args        map[string]interface{}
+	Args        Args
 	ShouldError bool
 	Error       string
 }

@@ -182,12 +182,20 @@ tests:
 
 ### Checks ("tests")
 
-The Check interface is shown below:
+The Checker interface is shown below:
 
 ```go
-type Check interface {
-  FromArgs(args interface{}) (Check, error)
+// Args is a convenience type to express the "args" key in the test yaml
+type Args map[string]interface{}
+
+type Checker interface {
   Check() error
+}
+
+// Argable is any struct which can create a Checker from the YAML args we get
+// back from a test block.
+type Argable interface {
+	FromArgs(args Args) (Checker, error)
 }
 ```
 
@@ -228,7 +236,7 @@ type ExampleCheck struct {
     OptionalArg interface{} `mapstructure:"optional_arg"`
 }
 
-func (ec ExampleCheck) FromArgs(args map[string]interface{}) (Check, error) {
+func (ec ExampleCheck) FromArgs(args Args) (Check, error) {
     if err := requiredArgs(args, "required_arg"); err != nil {
         return nil, err
     }

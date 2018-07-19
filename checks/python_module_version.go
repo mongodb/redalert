@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	availableChecks["python-module-version"] = func(args map[string]interface{}) (Checker, error) {
+	availableChecks["python-module-version"] = func(args Args) (Checker, error) {
 		return PythonModuleVersion{}.FromArgs(args)
 	}
 }
@@ -111,7 +111,7 @@ func (pmv PythonModuleVersion) Check() error {
 
 // FromArgs will populate the PythonModuleVersion struct with the args given in the tests YAML
 // config
-func (pmv PythonModuleVersion) FromArgs(args map[string]interface{}) (Checker, error) {
+func (pmv PythonModuleVersion) FromArgs(args Args) (Checker, error) {
 	if err := requiredArgs(args, "module"); err != nil {
 		return nil, err
 	}

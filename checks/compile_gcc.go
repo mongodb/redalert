@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	availableChecks["compile-gcc"] = func(args map[string]interface{}) (Checker, error) {
+	availableChecks["compile-gcc"] = func(args Args) (Checker, error) {
 		return CompileGcc{}.FromArgs(args)
 	}
 }
@@ -133,7 +133,7 @@ func (cg CompileGcc) Check() error {
 
 // FromArgs will populate the CompileGcc with the args given in the tests YAML
 // config
-func (cg CompileGcc) FromArgs(args map[string]interface{}) (Checker, error) {
+func (cg CompileGcc) FromArgs(args Args) (Checker, error) {
 	if err := requiredArgs(args, "source"); err != nil {
 		return nil, err
 	}

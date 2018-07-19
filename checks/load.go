@@ -10,7 +10,7 @@ var availableChecks = map[string]ArgableFunc{}
 
 // LoadCheck will return the appropriate Checker based on the test type name.
 // As documented on the various checkers
-func LoadCheck(name string, args map[string]interface{}) (Checker, error) {
+func LoadCheck(name string, args Args) (Checker, error) {
 	if argFunc, exists := availableChecks[name]; exists {
 		checker, err := argFunc(args)
 		if err != nil {
