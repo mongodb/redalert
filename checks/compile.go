@@ -17,13 +17,17 @@ import (
 )
 
 func init() {
-	availableChecks["compile-gcc"] = CompileGccFromArgs
+	availableChecks["compile"] = func(args map[string]interface{}) (Checker, error) {
+		return CompileChecker{}.FromArgs(args)
+	}
 }
 
-// CompileGcc runs gcc compile.
+// CompileChecker runs gcc compile.
 //
 // Type:
+//	 - compile
 //	 - compile-gcc
+//	 - compile-visual-studio
 //
 // Support Platforms:
 //   - Mac
@@ -32,10 +36,11 @@ func init() {
 //
 // Arguments:
 //   source (required): The source code of the script.
-//   compiler: path to the compiler. Default is 'gcc' from the PATH
+//   compiler: path to the compiler. Default is 'gcc' from the PATH on Linux and
+//             the most recent Visual Studio on Windows
 //   cflags: compiles flags, string, e.g "-lss -lsasl2"
 //   cflags_command: command to get clags, e.g. "net-snmp-config --agent-libs"
-type CompileGcc struct {
+type CompileChecker struct {
 	Source        string
 	Compiler      string
 	Cflags        string
@@ -43,9 +48,12 @@ type CompileGcc struct {
 	Run           bool
 }
 
+// Check is implmented in the platform specific files compile_windows.go and
+// compile_unix.go
+
 // Check Runs a gcc command and checks the return code
-func (cg CompileGcc) Check() error {
-	tmpfolder, err := ioutil.TempDir("", "compileGcc_")
+func (cg CompileChecker) Check() error {
+	tmpfolder, err := ioutil.TempDir("", "CompileChecker_")
 	if err != nil {
 		return fmt.Errorf("Problem creating a tmpdir: %s", err)
 	}
@@ -133,11 +141,9 @@ func (cg CompileGcc) Check() error {
 	return nil
 }
 
-// CompileGccFromArgs will populate the CompileGcc with the args given in the
-// tests YAML config
-func CompileGccFromArgs(args Args) (Checker, error) {
-	cg := CompileGcc{}
-
+// FromArgs will populate the CompileChecker with the args given in the tests YAML
+// config
+func (cg CompileChecker) FromArgs(args map[string]interface{}) (Checker, error) {
 	if err := requiredArgs(args, "source"); err != nil {
 		return nil, err
 	}

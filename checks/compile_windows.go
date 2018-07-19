@@ -1,0 +1,5 @@
+package checks
+
+func init() {
+
+}

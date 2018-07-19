@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestCompileGcc(t *testing.T) {
+func TestCompileChecker(t *testing.T) {
 
 	tests := checkerTests{
 		{
@@ -79,5 +79,18 @@ func TestCompileGcc(t *testing.T) {
 		},
 	}
 
-	runCheckerTests(t, tests, availableChecks["compile-gcc"])
+	for _, test := range tests {
+		checker, err := CompileChecker{}.FromArgs(test.Args)
+		if err != nil {
+			t.Errorf("%s: Unxpected error %s", test.Name, err)
+		}
+
+		err = checker.Check()
+		if err != nil && !test.ShouldError {
+			t.Errorf("%s: Got err when didn't expect one: %s", test.Name, err)
+		} else if err == nil && test.ShouldError {
+			t.Errorf("%s: Didn't get err when expected one: %s", test.Name, err)
+		}
+	}
+
 }
