@@ -1,0 +1,13 @@
+author: Mathew Robinson
+email: chasinglogic@gmail.com
+ident: Apache-2.0
+excludes:
+  - .travis.yml
+  - .*.md
+  - Makefile
+  - Vagrantfile
+  - docs
+  - vendor
+  - requirements.txt
+  - glide.yaml
+  - .goreleaser.yml
