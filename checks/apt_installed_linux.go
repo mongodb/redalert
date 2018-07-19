@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	availableChecks["apt-installed"] = func(args map[string]interface{}) (Checker, error) {
+	availableChecks["apt-installed"] = func(args Args) (Checker, error) {
 		return AptInstalled{}.FromArgs(args)
 	}
 
@@ -44,7 +44,7 @@ func (ai AptInstalled) Check() error {
 
 // FromArgs will populate the AptInstalled struct with the args given in the tests YAML
 // config
-func (ai AptInstalled) FromArgs(args map[string]interface{}) (Checker, error) {
+func (ai AptInstalled) FromArgs(args Args) (Checker, error) {
 	if err := requiredArgs(args, "package"); err != nil {
 		return nil, err
 	}

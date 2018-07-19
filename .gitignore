@@ -12,3 +12,5 @@ ubuntu-bionic-18.04-cloudimg-console.log
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+redalert

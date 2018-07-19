@@ -6,7 +6,7 @@ func TestRegistryKeyChecker(t *testing.T) {
 	tests := checkerTests{
 		{
 			Name: "check dword value",
-			Args: map[string]interface{}{
+			Args: Args{
 				"root":       "HKLM",
 				"path":       "SYSTEM\\CurrentControlSet\\services\\LanmanServer\\Parameters",
 				"key":        "Size",
@@ -16,14 +16,14 @@ func TestRegistryKeyChecker(t *testing.T) {
 		},
 		{
 			Name: "check path exists",
-			Args: map[string]interface{}{
+			Args: Args{
 				"root": "HKEY_LOCAL_MACHINE",
 				"path": "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
 			},
 		},
 		{
 			Name: "check path doesn't exist",
-			Args: map[string]interface{}{
+			Args: Args{
 				"root": "HKEY_LOCAL_MACHINE",
 				"path": "SOFTWARE\\Microsoft\\Windows NT\\NotARealPath",
 			},

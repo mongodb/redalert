@@ -7,7 +7,7 @@ import (
 )
 
 func init() {
-	availableChecks["yum-installed"] = func(args map[string]interface{}) (Checker, error) {
+	availableChecks["yum-installed"] = func(args Args) (Checker, error) {
 		return YumInstalled{}.FromArgs(args)
 	}
 }
@@ -42,7 +42,7 @@ func (yi YumInstalled) Check() error {
 
 // FromArgs will populate the YumInstalled struct with the args given in the tests YAML
 // config
-func (yi YumInstalled) FromArgs(args map[string]interface{}) (Checker, error) {
+func (yi YumInstalled) FromArgs(args Args) (Checker, error) {
 	if err := requiredArgs(args, "package"); err != nil {
 		return nil, err
 	}

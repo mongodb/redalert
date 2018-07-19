@@ -8,18 +8,18 @@ import (
 )
 
 func init() {
-	availableChecks["ulimit"] = func(args map[string]interface{}) (Checker, error) {
+	availableChecks["ulimit"] = func(args Args) (Checker, error) {
 		return UlimitChecker{}.FromArgs(args)
 	}
 
 	// Legacy greenbay types
-	availableChecks["open-files"] = func(args map[string]interface{}) (Checker, error) {
+	availableChecks["open-files"] = func(args Args) (Checker, error) {
 		args["item"] = "nofile"
 		args["type"] = "hard"
 		return UlimitChecker{}.FromArgs(args)
 	}
 
-	availableChecks["address-size"] = func(args map[string]interface{}) (Checker, error) {
+	availableChecks["address-size"] = func(args Args) (Checker, error) {
 		args["item"] = "as"
 		args["type"] = "hard"
 		return UlimitChecker{}.FromArgs(args)
@@ -105,7 +105,7 @@ func (uc UlimitChecker) Check() error {
 
 // FromArgs will populate the UlimitChecker with the args given in the tests YAML
 // config
-func (uc UlimitChecker) FromArgs(args map[string]interface{}) (Checker, error) {
+func (uc UlimitChecker) FromArgs(args Args) (Checker, error) {
 	if err := requiredArgs(args, "item", "value"); err != nil {
 		return nil, err
 	}

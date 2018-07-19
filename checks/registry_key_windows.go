@@ -8,11 +8,11 @@ import (
 )
 
 func init() {
-	availableChecks["registry"] = func(args map[string]interface{}) (Checker, error) {
+	availableChecks["registry"] = func(args Args) (Checker, error) {
 		return RegistryKeyChecker{}.FromArgs(args)
 	}
 
-	availableChecks["irp-stack-size"] = func(args map[string]interface{}) (Checker, error) {
+	availableChecks["irp-stack-size"] = func(args Args) (Checker, error) {
 		args["root"] = "HKLM"
 		args["path"] = "SYSTEM\\CurrentControlSet\\services\\LanmanServer\\Parameters"
 		args["key"] = "IRPStackSize"
@@ -160,7 +160,7 @@ func (rkc RegistryKeyChecker) Check() error {
 }
 
 // FromArgs implements Argable for RegistryKeyChecker
-func (rkc RegistryKeyChecker) FromArgs(args map[string]interface{}) (Checker, error) {
+func (rkc RegistryKeyChecker) FromArgs(args Args) (Checker, error) {
 	if err := requiredArgs(args, "root", "path"); err != nil {
 		return nil, err
 	}

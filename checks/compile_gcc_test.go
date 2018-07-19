@@ -8,12 +8,12 @@ func TestCompileGcc(t *testing.T) {
 
 	tests := []struct {
 		Name        string
-		Args        map[string]interface{}
+		Args        Args
 		ShouldError bool
 	}{
 		{
 			Name: "gcc compile hello world",
-			Args: map[string]interface{}{
+			Args: Args{
 				"source": `#include <stdio.h>
 
 				int main() {
@@ -23,7 +23,7 @@ func TestCompileGcc(t *testing.T) {
 		},
 		{
 			Name: "gcc compile bad hello world",
-			Args: map[string]interface{}{
+			Args: Args{
 				"source": `include <stdio.h>
 
 				int main() {
@@ -34,7 +34,7 @@ func TestCompileGcc(t *testing.T) {
 		},
 		{
 			Name: "gcc compile hello world with args",
-			Args: map[string]interface{}{
+			Args: Args{
 				"source": `#include <stdio.h>
 
 				int main() {
@@ -45,7 +45,7 @@ func TestCompileGcc(t *testing.T) {
 		},
 		{
 			Name: "gcc compile hello world with bad args",
-			Args: map[string]interface{}{
+			Args: Args{
 				"source": `include <stdio.h>
 
 				int main() {
@@ -57,7 +57,7 @@ func TestCompileGcc(t *testing.T) {
 		},
 		{
 			Name: "gcc compile hello world with cflags_command",
-			Args: map[string]interface{}{
+			Args: Args{
 				"source": `#include <stdio.h>
 
 				int main() {
@@ -68,7 +68,7 @@ func TestCompileGcc(t *testing.T) {
 		},
 		{
 			Name: "gcc compile hello world with bad cflags_command",
-			Args: map[string]interface{}{
+			Args: Args{
 				"source": `#include <stdio.h>
 
 				int main() {

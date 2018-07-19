@@ -20,39 +20,39 @@ func TestRunUnixShellScript(t *testing.T) {
 
 	tests := []struct {
 		Name        string
-		Args        map[string]interface{}
+		Args        Args
 		ShouldError bool
 	}{
 		{
 			Name: "exit 0 check for exit code",
-			Args: map[string]interface{}{
+			Args: Args{
 				"source": "exit 0",
 			},
 		},
 		{
 			Name: "exit 1 check for exit code",
-			Args: map[string]interface{}{
+			Args: Args{
 				"source": "exit 1",
 			},
 			ShouldError: true,
 		},
 		{
 			Name: "run bad command",
-			Args: map[string]interface{}{
+			Args: Args{
 				"source": "ls -l /fake_dir",
 			},
 			ShouldError: true,
 		},
 		{
 			Name: "echo 123 checks for 123",
-			Args: map[string]interface{}{
+			Args: Args{
 				"output": "123",
 				"source": "echo 123",
 			},
 		},
 		{
 			Name: "echo 123 checks for 111",
-			Args: map[string]interface{}{
+			Args: Args{
 				"output": "111",
 				"source": "echo 123",
 			},
@@ -60,14 +60,14 @@ func TestRunUnixShellScript(t *testing.T) {
 		},
 		{
 			Name: "echo 123 with good interpreter",
-			Args: map[string]interface{}{
+			Args: Args{
 				"source":      "echo 123",
 				"interpreter": "/bin/sh",
 			},
 		},
 		{
 			Name: "echo 123 with bad interpreter",
-			Args: map[string]interface{}{
+			Args: Args{
 				"source":      "echo 123",
 				"interpreter": "/bin/shhh",
 			},
@@ -100,7 +100,7 @@ func TestRunPythonScript(t *testing.T) {
 	tests := checkerTests{
 		{
 			Name: "python print 123 expecting 123",
-			Args: map[string]interface{}{
+			Args: Args{
 				"source":      "print('123')",
 				"interpreter": "python",
 				"output":      "123",
@@ -108,7 +108,7 @@ func TestRunPythonScript(t *testing.T) {
 		},
 		{
 			Name: "python print 123 expecting 111",
-			Args: map[string]interface{}{
+			Args: Args{
 				"source":      "print('123')",
 				"interpreter": "python",
 				"output":      "111",
@@ -117,14 +117,14 @@ func TestRunPythonScript(t *testing.T) {
 		},
 		{
 			Name: "python exit 0 check for exit code",
-			Args: map[string]interface{}{
+			Args: Args{
 				"source":      "exit(0)",
 				"interpreter": "python",
 			},
 		},
 		{
 			Name: "python exit 1 check for exit code",
-			Args: map[string]interface{}{
+			Args: Args{
 				"source":      "exit(1)",
 				"interpreter": "python",
 			},
@@ -132,7 +132,7 @@ func TestRunPythonScript(t *testing.T) {
 		},
 		{
 			Name: "python import module check exit code",
-			Args: map[string]interface{}{
+			Args: Args{
 				"source": `import datetime
 print(datetime.date.today())`,
 				"interpreter": "python",
@@ -140,7 +140,7 @@ print(datetime.date.today())`,
 		},
 		{
 			Name: "python import bad module check exit code",
-			Args: map[string]interface{}{
+			Args: Args{
 				"source":      "import datetimes",
 				"interpreter": "python",
 			},
