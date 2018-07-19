@@ -9,7 +9,6 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/chasinglogic/redalert/checks"
 	"github.com/chasinglogic/redalert/testfile"
 	"github.com/spf13/cobra"
 	yaml "gopkg.in/yaml.v2"
@@ -90,13 +89,13 @@ var Run = &cobra.Command{
 
 		for _, suite := range suites {
 			tests := testsFile.TestsToRun(suite)
-			loadedChecks, err := checks.LoadChecks(tests)
+			loadedChecks, err := testfile.LoadChecks(tests)
 			if err != nil {
 				fmt.Println("ERROR: Unable to load checks:", err)
 				continue
 			}
 
-			checksToRun := make(chan checks.CheckToRun, len(loadedChecks))
+			checksToRun := make(chan testfile.CheckToRun, len(loadedChecks))
 			checkResults := make(chan checkResult, len(loadedChecks))
 
 			for i := 0; i < runtime.NumCPU(); i++ {
@@ -137,7 +136,7 @@ type checkResult struct {
 	Result error
 }
 
-func runCheck(incomingChecks chan checks.CheckToRun, results chan checkResult) {
+func runCheck(incomingChecks chan testfile.CheckToRun, results chan checkResult) {
 	for check := range incomingChecks {
 		results <- checkResult{
 			Name:   check.Name,

@@ -23,7 +23,7 @@ func TestRunCommand(t *testing.T) {
 				Name:   "should run",
 				Suites: []string{"any"},
 				Type:   "file-exists",
-				Args: map[string]interface{}{
+				Args: Args{
 					"name": "run_test.txt",
 				},
 			},
@@ -31,7 +31,7 @@ func TestRunCommand(t *testing.T) {
 				Name:   "should also run",
 				Suites: []string{"any"},
 				Type:   "file-exists",
-				Args: map[string]interface{}{
+				Args: Args{
 					"name": "run_test.txt",
 				},
 			},
@@ -39,7 +39,7 @@ func TestRunCommand(t *testing.T) {
 				Name:   "Should not run",
 				Suites: []string{"NOPE"},
 				Type:   "file-exists",
-				Args: map[string]interface{}{
+				Args: Args{
 					"name": "NOPE.txt",
 				},
 			},

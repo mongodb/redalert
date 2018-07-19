@@ -1,6 +1,10 @@
 package testfile
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/chasinglogic/redalert/checks"
+)
 
 // Aliases is used to map one suite name to multiple "suites"
 type Aliases map[string][]string
@@ -27,7 +31,7 @@ type Test struct {
 	Name   string
 	Type   string
 	Suites []string
-	Args   map[string]interface{}
+	Args   checks.Args
 }
 
 // Matches will return a boolean indicating whether this test should be run
@@ -107,4 +111,33 @@ func (tf TestFile) TestsToRun(suite string) []Test {
 	}
 
 	return testsToRun
+}
+
+// CheckToRun keeps the name and actual check object together for easy
+// reporting to the user.
+type CheckToRun struct {
+	Name    string
+	Checker checks.Checker
+}
+
+// Check makes CheckToRun a Checker
+func (ctr CheckToRun) Check() error {
+	return ctr.Checker.Check()
+}
+
+// LoadChecks takes a slice of tesfile.Tests and returns a slice of Checks to run
+func LoadChecks(tests []Test) ([]CheckToRun, error) {
+	checksToRun := make([]CheckToRun, len(tests))
+
+	var err error
+
+	for i, test := range tests {
+		checksToRun[i].Name = test.Name
+		checksToRun[i].Checker, err = checks.LoadCheck(test.Type, test.Args)
+		if err != nil {
+			return nil, fmt.Errorf("Error loading check for test %s: %s", test.Name, err)
+		}
+	}
+
+	return checksToRun, nil
 }
