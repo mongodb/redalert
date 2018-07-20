@@ -42,14 +42,35 @@ type PipInstalled struct {
 }
 
 func (pmv PipInstalled) makeStringSemverCompatible(s string) string {
-	switch len(strings.Split(s, ".")) {
+	split := strings.Split(s, ".")
+	switch len(split) {
 	case 2:
-		return s + ".0"
+		split = append(split, "0")
 	case 1:
-		return s + ".0.0"
-	default:
-		return s
+		split = append(split, "0", "0")
 	}
+
+	for i := range split {
+		// Check for 0 padded numbers
+		if !strings.HasPrefix(split[i], "0") {
+			continue
+		}
+
+		zeroPadded := []rune(split[i])
+		nonZeroPadded := make([]rune, 0)
+
+		for x := range zeroPadded {
+			if zeroPadded[x] == '0' && x != len(zeroPadded)-1 {
+				continue
+			}
+
+			nonZeroPadded = append(nonZeroPadded, zeroPadded[x])
+		}
+
+		split[i] = string(nonZeroPadded)
+	}
+
+	return strings.Join(split, ".")
 }
 
 // Check if a python module is installed on the system and verify version if

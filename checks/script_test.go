@@ -74,7 +74,7 @@ func TestRunUnixShellScript(t *testing.T) {
 		},
 	}
 
-	runCheckerTests(t, tests, availableChecks["run-bash-script"])
+	runCheckerTests(t, tests, availableChecks["run-script"])
 }
 
 func TestRunPythonScript(t *testing.T) {
