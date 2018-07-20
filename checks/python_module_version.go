@@ -1,7 +1,6 @@
 // Copyright 2018 Mathew Robinson <chasinglogic@gmail.com>. All rights reserved. Use of this source code is
 // governed by the Apache-2.0 license that can be found in the LICENSE file.
 
-
 package checks
 
 import (
@@ -13,10 +12,11 @@ import (
 )
 
 func init() {
-	availableChecks["python-module-version"] = PythonModuleVersionFromArgs
+	availableChecks["pip-installed"] = PipInstalledFromArgs
+	availableChecks["python-module-version"] = availableChecks["pip-installed"]
 }
 
-// PythonModuleVersion checks if python module is installed on the system
+// PipInstalled checks if python module is installed on the system
 // And verifies its version.
 //
 // Type:
@@ -34,14 +34,14 @@ func init() {
 //              Defaults to module.__version__
 //   relationship: Optional comparison operator for the version provided. Valid
 //                 values are lt, lte, gt, gte, eq. Defaults to gte (greater than or equal to)
-type PythonModuleVersion struct {
+type PipInstalled struct {
 	Module       string
 	Version      string
 	Relationship string
 	Statement    string
 }
 
-func (pmv PythonModuleVersion) makeStringSemverCompatible(s string) string {
+func (pmv PipInstalled) makeStringSemverCompatible(s string) string {
 	switch len(strings.Split(s, ".")) {
 	case 2:
 		return s + ".0"
@@ -54,7 +54,7 @@ func (pmv PythonModuleVersion) makeStringSemverCompatible(s string) string {
 
 // Check if a python module is installed on the system and verify version if
 // the Version string is set
-func (pmv PythonModuleVersion) Check() error {
+func (pmv PipInstalled) Check() error {
 	if pmv.Statement == "" {
 		pmv.Statement = pmv.Module + ".__version__"
 	}
@@ -111,10 +111,10 @@ func (pmv PythonModuleVersion) Check() error {
 	return nil
 }
 
-// FromArgs will populate the PythonModuleVersion struct with the args given in the tests YAML
+// FromArgs will populate the PipInstalled struct with the args given in the tests YAML
 // config
-func PythonModuleVersionFromArgs(args Args) (Checker, error) {
-	pmv := PythonModuleVersion{}
+func PipInstalledFromArgs(args Args) (Checker, error) {
+	pmv := PipInstalled{}
 
 	if err := requiredArgs(args, "module"); err != nil {
 		return nil, err
