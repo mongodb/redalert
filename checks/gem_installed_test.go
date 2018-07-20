@@ -1,7 +1,6 @@
 // Copyright 2018 Mathew Robinson <chasinglogic@gmail.com>. All rights reserved. Use of this source code is
 // governed by the Apache-2.0 license that can be found in the LICENSE file.
 
-
 package checks
 
 import (
@@ -17,25 +16,21 @@ func TestGemInstalled(t *testing.T) {
 		return
 	}
 
-	// A gem that should exist everywhere
-	err = GemInstalled{Name: "rake"}.Check()
-	if err != nil {
-		t.Error(err)
+	tests := checkerTests{
+		{
+			Name: "rake should be installed",
+			Args: Args{
+				"name": "rake",
+			},
+		},
+		{
+			Name: "NOT_A_GEM should not be installed",
+			Args: Args{
+				"name": "NOT_A_GEM",
+			},
+			ShouldError: true,
+		},
 	}
 
-	// A gem you certainly don't want on your system
-	err = GemInstalled{Name: "i-am-not-a-gem-at-all"}.Check()
-	if err == nil {
-		t.Error("Got no error, which is the expected behavior here.")
-	}
-
-	checker, err := GemInstalledFromArgs(Args{"name": "rake"})
-	if err != nil {
-		t.Error(err)
-	}
-
-	err = checker.Check()
-	if err != nil {
-		t.Error(err)
-	}
+	runCheckerTests(t, tests, availableChecks["gem-installed"])
 }

@@ -1,7 +1,6 @@
 // Copyright 2018 Mathew Robinson <chasinglogic@gmail.com>. All rights reserved. Use of this source code is
 // governed by the Apache-2.0 license that can be found in the LICENSE file.
 
-
 package checks
 
 import (
@@ -18,24 +17,21 @@ func TestYumInstalled(t *testing.T) {
 		return
 	}
 
-	err = YumInstalled{Package: "kernel"}.Check()
-	if err != nil {
-		t.Error(err)
+	tests := checkerTests{
+		{
+			Name: "kernel package should be installed",
+			Args: Args{
+				"package": "kernel",
+			},
+		},
+		{
+			Name: "NOT_A_YUM_PACKAGE should not be installed",
+			Args: Args{
+				"package": "NOT_A_YUM_PACKAGE",
+			},
+			ShouldError: true,
+		},
 	}
 
-	// This should fail
-	err = YumInstalled{Package: "DonaldTrump"}.Check()
-	if err == nil {
-		t.Error("Got no error, which is the expecte behavior here.")
-	}
-
-	checker, err := YumInstalledFromArgs(Args{"name": "kernel"})
-	if err != nil {
-		t.Error(err)
-	}
-
-	err = checker.Check()
-	if err != nil {
-		t.Error(err)
-	}
+	runCheckerTests(t, tests, availableChecks["yum-installed"])
 }

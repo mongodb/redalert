@@ -10,7 +10,6 @@ import (
 )
 
 func TestAptInstalled(t *testing.T) {
-
 	// First make sure dpgk is in the PATH
 	// Don't run these tests unless you are on a system with dpkg
 	_, err := exec.LookPath("dpkg")
@@ -18,24 +17,21 @@ func TestAptInstalled(t *testing.T) {
 		return
 	}
 
-	err = AptInstalled{Package: "linux-base"}.Check()
-	if err != nil {
-		t.Error(err)
+	tests := checkerTests{
+		{
+			Name: "linux-base should be installed",
+			Args: Args{
+				"package": "linux-base",
+			},
+		},
+		{
+			Name: "NOT_A_PACKAGE should not be installed",
+			Args: Args{
+				"package": "NOT_A_PACKAGE",
+			},
+			ShouldError: true,
+		}
 	}
 
-	// This should fail
-	err = AptInstalled{Package: "DonaldTrump"}.Check()
-	if err == nil {
-		t.Error("Got no error, which is the expected behavior here.")
-	}
-
-	checker, err := AptInstalledFromArgs(Args{"name": "linux-base"})
-	if err != nil {
-		t.Error(err)
-	}
-
-	err = checker.Check()
-	if err != nil {
-		t.Error(err)
-	}
+	runCheckerTests(t, tests, availableChecks["apt-installed"])
 }

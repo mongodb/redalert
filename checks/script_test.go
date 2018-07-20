@@ -1,7 +1,6 @@
 // Copyright 2018 Mathew Robinson <chasinglogic@gmail.com>. All rights reserved. Use of this source code is
 // governed by the Apache-2.0 license that can be found in the LICENSE file.
 
-
 package checks
 
 import (
@@ -22,11 +21,7 @@ func TestRunUnixShellScript(t *testing.T) {
 		return
 	}
 
-	tests := []struct {
-		Name        string
-		Args        Args
-		ShouldError bool
-	}{
+	tests := checkerTests{
 		{
 			Name: "exit 0 check for exit code",
 			Args: Args{
@@ -79,20 +74,7 @@ func TestRunUnixShellScript(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
-		checker, err := RunScriptFromArgs(test.Args)
-		if err != nil {
-			t.Errorf("%s: Unxpected error %s", test.Name, err)
-		}
-
-		err = checker.Check()
-		if err != nil && !test.ShouldError {
-			t.Errorf("%s: Got err when didn't expect one: %s", test.Name, err)
-		} else if err == nil && test.ShouldError {
-			t.Errorf("%s: Didn't get err when expected one: %s", test.Name, err)
-		}
-	}
-
+	runCheckerTests(t, tests, availableChecks["run-bash-script"])
 }
 
 func TestRunPythonScript(t *testing.T) {
@@ -105,32 +87,28 @@ func TestRunPythonScript(t *testing.T) {
 		{
 			Name: "python print 123 expecting 123",
 			Args: Args{
-				"source":      "print('123')",
-				"interpreter": "python",
-				"output":      "123",
+				"source": "print('123')",
+				"output": "123",
 			},
 		},
 		{
 			Name: "python print 123 expecting 111",
 			Args: Args{
-				"source":      "print('123')",
-				"interpreter": "python",
-				"output":      "111",
+				"source": "print('123')",
+				"output": "111",
 			},
 			ShouldError: true,
 		},
 		{
 			Name: "python exit 0 check for exit code",
 			Args: Args{
-				"source":      "exit(0)",
-				"interpreter": "python",
+				"source": "exit(0)",
 			},
 		},
 		{
 			Name: "python exit 1 check for exit code",
 			Args: Args{
-				"source":      "exit(1)",
-				"interpreter": "python",
+				"source": "exit(1)",
 			},
 			ShouldError: true,
 		},
@@ -139,31 +117,16 @@ func TestRunPythonScript(t *testing.T) {
 			Args: Args{
 				"source": `import datetime
 print(datetime.date.today())`,
-				"interpreter": "python",
 			},
 		},
 		{
 			Name: "python import bad module check exit code",
 			Args: Args{
-				"source":      "import datetimes",
-				"interpreter": "python",
+				"source": "import datetimes",
 			},
 			ShouldError: true,
 		},
 	}
 
-	for _, test := range tests {
-		checker, err := RunScriptFromArgs(test.Args)
-		if err != nil {
-			t.Errorf("%s: Unxpected error %s", test.Name, err)
-		}
-
-		err = checker.Check()
-		if err != nil && !test.ShouldError {
-			t.Errorf("%s: Got err when didn't expect one: %s", test.Name, err)
-		} else if err == nil && test.ShouldError {
-			t.Errorf("%s: Didn't get err when expected one: %s", test.Name, err)
-		}
-	}
-
+	runCheckerTests(t, tests, availableChecks["run-python-script"])
 }
