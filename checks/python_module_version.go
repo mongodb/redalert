@@ -51,26 +51,29 @@ func (pmv PipInstalled) makeStringSemverCompatible(s string) string {
 	}
 
 	for i := range split {
+		// Cleanup whitesapce
+		split[i] = strings.TrimSpace(split[i])
+
 		// Check for 0 padded numbers
 		if !strings.HasPrefix(split[i], "0") {
 			continue
 		}
 
 		zeroPadded := []rune(split[i])
-		nonZeroPadded := make([]rune, 0)
-
 		for x := range zeroPadded {
-			if zeroPadded[x] == '0' && x != len(zeroPadded)-1 {
-				continue
+			if x == len(zeroPadded)-1 {
+				split[i] = "0"
+				break
 			}
 
-			nonZeroPadded = append(nonZeroPadded, zeroPadded[x])
+			if zeroPadded[x] != '0' {
+				split[i] = string(zeroPadded[x:])
+				break
+			}
 		}
-
-		split[i] = string(nonZeroPadded)
 	}
 
-	return strings.Join(split, ".")
+	return strings.TrimSpace(strings.Join(split, "."))
 }
 
 // Check if a python module is installed on the system and verify version if
@@ -93,16 +96,15 @@ func (pmv PipInstalled) Check() error {
 
 	pmv.Version = pmv.makeStringSemverCompatible(pmv.Version)
 
-	// strip the newline added by python's print()
-	strippedOutput := strings.TrimRight(string(out), "\n")
-	strippedOutput = pmv.makeStringSemverCompatible(strippedOutput)
+	strippedOutput := pmv.makeStringSemverCompatible(string(out))
 
 	installedVersion, err := semver.Parse(strippedOutput)
 	if err != nil {
 		return fmt.Errorf("Unable to parse semver from python output: %s: %s", strippedOutput, err)
 	}
 
-	requestedVersion, err := semver.Parse(pmv.Version)
+	strippedInput := pmv.makeStringSemverCompatible(pmv.Version)
+	requestedVersion, err := semver.Parse(strippedInput)
 	if err != nil {
 		return fmt.Errorf("Unable to parse semver from args: %s", err)
 	}
