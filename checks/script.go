@@ -1,7 +1,6 @@
 // Copyright 2018 Mathew Robinson <chasinglogic@gmail.com>. All rights reserved. Use of this source code is
 // governed by the Apache-2.0 license that can be found in the LICENSE file.
 
-
 package checks
 
 import (
@@ -89,15 +88,26 @@ func (rs RunScript) Check() error {
 		return fmt.Errorf("Problem running the script: %s: %s", err.Error(), string(out))
 	}
 
-	if rs.Output != "" && strings.TrimRight(string(out), "\n") != rs.Output {
+	if rs.Output == "" {
+		return nil
+	}
+
+	var trimmed string
+	if runtime.GOOS == "windows" {
+		trimmed = strings.TrimRight(string(out), "\r\n")
+	} else {
+		trimmed = strings.TrimRight(string(out), "\n")
+	}
+
+	if trimmed != rs.Output {
 		return fmt.Errorf("Output doesn't match. Expected '%s'\nActual output: %s", rs.Output, string(out))
 	}
 
 	return nil
 }
 
-// FromArgs will populate the RunScript with the args given in the tests YAML
-// config
+// RunScriptFromArgs will populate the RunScript with the args given in the
+// tests YAML config
 func RunScriptFromArgs(args Args) (Checker, error) {
 	rs := RunScript{}
 
@@ -110,7 +120,7 @@ func RunScriptFromArgs(args Args) (Checker, error) {
 	}
 
 	if _, interpreterGiven := args["interpreter"]; rs.Interpreter == "" && !interpreterGiven {
-		rs.Interpreter = "/bin/bash"
+		rs.Interpreter = "bash"
 	}
 
 	if _, outputGiven := args["output"]; rs.Output == "" && !outputGiven {
