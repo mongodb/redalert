@@ -4,10 +4,17 @@
 package checks
 
 import (
+	"os/exec"
 	"testing"
 )
 
 func TestCompileGcc(t *testing.T) {
+	// First make sure gcc is in the PATH
+	// Don't run these tests unless you are on a system with gcc installed
+	_, err := exec.LookPath("gcc")
+	if err != nil {
+		return
+	}
 
 	tests := checkerTests{
 		{

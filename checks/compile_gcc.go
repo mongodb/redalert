@@ -1,7 +1,6 @@
 // Copyright 2018 Mathew Robinson <chasinglogic@gmail.com>. All rights reserved. Use of this source code is
 // governed by the Apache-2.0 license that can be found in the LICENSE file.
 
-
 package checks
 
 import (
@@ -31,10 +30,11 @@ func init() {
 //   - Windows
 //
 // Arguments:
-//   source (required): The source code of the script.
-//   compiler: path to the compiler. Default is 'gcc' from the PATH
+//   source (required): The source code to compile.
+//   compiler: path to the compiler. Default is 'gcc' from the $PATH
 //   cflags: compiles flags, string, e.g "-lss -lsasl2"
 //   cflags_command: command to get clags, e.g. "net-snmp-config --agent-libs"
+//   run: If true try running the compiled binary
 type CompileGcc struct {
 	Source        string
 	Compiler      string
