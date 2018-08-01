@@ -29,7 +29,7 @@ func init() {
 //   - Windows
 //
 // Arguments:
-//   source (required): The source code to comipile.
+//   source (required): The source code to compile.
 //   cflags: A string that will be parsed using shlex and passed as arguments to cl.exe
 //   version: Visual studio version to use. Default is the latest version installed on the system
 //   extension: The file extension to use for the generated temporary file. Default is "cpp"
