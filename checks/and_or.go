@@ -143,7 +143,7 @@ func andFromArgs(args Args) (Checker, error) {
 }
 
 func orFromArgs(args Args) (Checker, error) {
-	or := AndCheck{}
+	or := OrCheck{}
 
 	if err := requiredArgs(args, "checks"); err != nil {
 		return nil, err
