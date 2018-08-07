@@ -1,7 +1,6 @@
 // Copyright 2018 Mathew Robinson <chasinglogic@gmail.com>. All rights reserved. Use of this source code is
 // governed by the Apache-2.0 license that can be found in the LICENSE file.
 
-
 package checks
 
 import (
@@ -20,7 +19,7 @@ func init() {
 // Type:
 //   - apt-installed
 //
-// Support Platforms:
+// Supported Platforms:
 //   - Linux
 //
 // Arguments:
