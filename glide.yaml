@@ -1,4 +1,4 @@
-package: github.com/chasinglogic/redalert
+package: github.com/mongodb/redalert
 import:
 - package: github.com/mitchellh/mapstructure
 - package: github.com/spf13/cobra
