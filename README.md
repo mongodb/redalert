@@ -9,7 +9,7 @@ To install use pip:
 
 Or clone the repo:
 
-    $ git clone https://github.com/chasinglogic/redalert.git
+    $ git clone https://github.com/mongodb/redalert.git
     $ python setup.py install
 
 Additionally standalone binaries are provided on the release page.

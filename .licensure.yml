@@ -1,5 +1,5 @@
-author: Mathew Robinson
-email: chasinglogic@gmail.com
+---
+author: MongoDB Inc.
 ident: Apache-2.0
 excludes:
   - .travis.yml

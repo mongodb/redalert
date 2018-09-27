@@ -1,4 +1,4 @@
-// Copyright 2018 Mathew Robinson <chasinglogic@gmail.com>. All rights reserved. Use of this source code is
+// Copyright 2018 MongoDB Inc. All rights reserved. Use of this source code is
 // governed by the Apache-2.0 license that can be found in the LICENSE file.
 
 
@@ -13,7 +13,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/chasinglogic/redalert/testfile"
+	"github.com/mongodb/redalert/testfile"
 	"github.com/spf13/cobra"
 	yaml "gopkg.in/yaml.v2"
 )

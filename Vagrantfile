@@ -19,7 +19,7 @@ Vagrant.configure("2") do |config|
     pip install pyyaml==3.13
     echo "Creating Directories and linking"
     mkdir -p $HOME/go/src/github.com/chasinglogic
-    ln -sf /vagrant $HOME/go/src/github.com/chasinglogic/redalert
+    ln -sf /vagrant $HOME/go/src/github.com/mongodb/redalert
 SHELL
     ubuntu.vm.provision "test", type: "shell", path: 'scripts/linux_test.sh', env: {'PLATFORM': ENV['PLATFORM']}
   end
@@ -33,7 +33,7 @@ SHELL
     curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
     python get-pip.py
     mkdir -p $HOME/go/src/github.com/chasinglogic
-    ln -sf /vagrant $HOME/go/src/github.com/chasinglogic/redalert
+    ln -sf /vagrant $HOME/go/src/github.com/mongodb/redalert
 SHELL
     centos.vm.provision "test", type: "shell", path: 'scripts/linux_test.sh', env: {'PLATFORM': ENV['PLATFORM']}
   end
