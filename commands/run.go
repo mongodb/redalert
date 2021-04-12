@@ -134,6 +134,14 @@ var Run = &cobra.Command{
 	},
 }
 
+var Document = &cobra.Command{
+	Use:   "document",
+	Short: "Document the current image",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("Hello from the ducment command")
+	},
+}
+
 type checkResult struct {
 	Name   string
 	Result error
