@@ -3,8 +3,6 @@ updated: 2018-07-18T12:20:09.342487-04:00
 imports:
 - name: github.com/blang/semver
   version: 2ee87856327ba09384cabd113bc6b5d174e9ec0f
-- name: github.com/go-yaml/yaml
-  version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
 - name: github.com/google/shlex
   version: 6f45313302b9c56850fc17f99e40caebce98c716
 - name: github.com/inconshreveable/mousetrap
