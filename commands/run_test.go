@@ -1,7 +1,6 @@
 // Copyright 2018 MongoDB Inc. All rights reserved. Use of this source code is
 // governed by the Apache-2.0 license that can be found in the LICENSE file.
 
-
 package commands
 
 import (
@@ -9,6 +8,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/mongodb/redalert/checks"
 	"github.com/mongodb/redalert/testfile"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -27,7 +27,7 @@ func TestRunCommand(t *testing.T) {
 				Name:   "should run",
 				Suites: []string{"any"},
 				Type:   "file-exists",
-				Args: Args{
+				Args: checks.Args{
 					"name": "run_test.txt",
 				},
 			},
@@ -35,7 +35,7 @@ func TestRunCommand(t *testing.T) {
 				Name:   "should also run",
 				Suites: []string{"any"},
 				Type:   "file-exists",
-				Args: Args{
+				Args: checks.Args{
 					"name": "run_test.txt",
 				},
 			},
@@ -43,7 +43,7 @@ func TestRunCommand(t *testing.T) {
 				Name:   "Should not run",
 				Suites: []string{"NOPE"},
 				Type:   "file-exists",
-				Args: Args{
+				Args: checks.Args{
 					"name": "NOPE.txt",
 				},
 			},

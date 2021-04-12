@@ -32,7 +32,12 @@ var formatTests = []formatTest{
 
 var tolerantFormatTests = []formatTest{
 	{Version{1, 2, 3, nil, nil}, "v1.2.3"},
+	{Version{1, 2, 0, []PRVersion{prstr("alpha")}, nil}, "1.2.0-alpha"},
+	{Version{1, 2, 0, nil, nil}, "1.2.00"},
 	{Version{1, 2, 3, nil, nil}, "	1.2.3 "},
+	{Version{1, 2, 3, nil, nil}, "01.02.03"},
+	{Version{0, 0, 3, nil, nil}, "00.0.03"},
+	{Version{0, 0, 3, nil, nil}, "000.0.03"},
 	{Version{1, 2, 0, nil, nil}, "1.2"},
 	{Version{1, 0, 0, nil, nil}, "1"},
 }
@@ -90,6 +95,28 @@ func TestValidate(t *testing.T) {
 	}
 }
 
+var finalizeVersionMethod = []formatTest{
+	{Version{1, 2, 3, nil, nil}, "1.2.3"},
+	{Version{0, 0, 1, nil, nil}, "0.0.1"},
+	{Version{0, 0, 1, []PRVersion{prstr("alpha"), prstr("preview")}, []string{"123", "456"}}, "0.0.1"},
+	{Version{1, 2, 3, []PRVersion{prstr("alpha"), prnum(1)}, []string{"123", "456"}}, "1.2.3"},
+	{Version{1, 2, 3, []PRVersion{prstr("alpha"), prnum(1)}, nil}, "1.2.3"},
+	{Version{1, 2, 3, nil, []string{"123", "456"}}, "1.2.3"},
+	// Prereleases and build metadata hyphens
+	{Version{1, 2, 3, []PRVersion{prstr("alpha"), prstr("b-eta")}, []string{"123", "b-uild"}}, "1.2.3"},
+	{Version{1, 2, 3, nil, []string{"123", "b-uild"}}, "1.2.3"},
+	{Version{1, 2, 3, []PRVersion{prstr("alpha"), prstr("b-eta")}, nil}, "1.2.3"},
+}
+
+func TestFinalizeVersionMethod(t *testing.T) {
+	for _, test := range finalizeVersionMethod {
+		out := test.v.FinalizeVersion()
+		if out != test.result {
+			t.Errorf("Finalized version error, expected %q but got %q", test.result, out)
+		}
+	}
+}
+
 type compareTest struct {
 	v1     Version
 	v2     Version
@@ -132,7 +159,7 @@ func TestCompare(t *testing.T) {
 		if res := test.v1.Compare(test.v2); res != test.result {
 			t.Errorf("Comparing %q : %q, expected %d but got %d", test.v1, test.v2, test.result, res)
 		}
-		//Test counterpart
+		// Test counterpart
 		if res := test.v2.Compare(test.v1); res != -test.result {
 			t.Errorf("Comparing %q : %q, expected %d but got %d", test.v2, test.v1, -test.result, res)
 		}
@@ -254,6 +281,64 @@ func TestCompareHelper(t *testing.T) {
 	}
 }
 
+const (
+	MAJOR = iota
+	MINOR
+	PATCH
+)
+
+type incrementTest struct {
+	version         Version
+	incrementType   int
+	expectingError  bool
+	expectedVersion Version
+}
+
+var incrementTests = []incrementTest{
+	{Version{1, 2, 3, nil, nil}, PATCH, false, Version{1, 2, 4, nil, nil}},
+	{Version{1, 2, 3, nil, nil}, MINOR, false, Version{1, 3, 0, nil, nil}},
+	{Version{1, 2, 3, nil, nil}, MAJOR, false, Version{2, 0, 0, nil, nil}},
+	{Version{0, 1, 2, nil, nil}, PATCH, false, Version{0, 1, 3, nil, nil}},
+	{Version{0, 1, 2, nil, nil}, MINOR, false, Version{0, 2, 0, nil, nil}},
+	{Version{0, 1, 2, nil, nil}, MAJOR, false, Version{1, 0, 0, nil, nil}},
+}
+
+func TestIncrements(t *testing.T) {
+	for _, test := range incrementTests {
+		var originalVersion = Version{
+			test.version.Major,
+			test.version.Minor,
+			test.version.Patch,
+			test.version.Pre,
+			test.version.Build,
+		}
+		var err error
+		switch test.incrementType {
+		case PATCH:
+			err = test.version.IncrementPatch()
+		case MINOR:
+			err = test.version.IncrementMinor()
+		case MAJOR:
+			err = test.version.IncrementMajor()
+		}
+		if test.expectingError {
+			if err != nil {
+				t.Errorf("Increment version, expecting %q, got error %q", test.expectedVersion, err)
+			}
+			if test.version.EQ(originalVersion) {
+				t.Errorf("Increment version, expecting %q, got %q", test.expectedVersion, test.version)
+			}
+		} else {
+			if (err != nil) && !test.expectingError {
+				t.Errorf("Increment version %q, not expecting error, got %q", test.version, err)
+			}
+			if test.version.NE(test.expectedVersion) {
+				t.Errorf("Increment version, expecting %q, got %q", test.expectedVersion, test.version)
+			}
+		}
+	}
+}
+
 func TestPreReleaseVersions(t *testing.T) {
 	p1, err := NewPRVersion("123")
 	if !p1.IsNumeric() {
@@ -324,12 +409,44 @@ func TestMakeHelper(t *testing.T) {
 	}
 }
 
+type finalizeTest struct {
+	input  string
+	output string
+}
+
+var finalizeTests = []finalizeTest{
+	{"", ""},
+	{"1.2.3", "1.2.3"},
+	{"0.0.1", "0.0.1"},
+	{"0.0.1-alpha.preview+123.456", "0.0.1"},
+	{"1.2.3-alpha.1+123.456", "1.2.3"},
+	{"1.2.3-alpha.1", "1.2.3"},
+	{"1.2.3+123.456", "1.2.3"},
+	{"1.2.3-alpha.b-eta+123.b-uild", "1.2.3"},
+	{"1.2.3+123.b-uild", "1.2.3"},
+	{"1.2.3-alpha.b-eta", "1.2.3"},
+	{"1.2-alpha", ""},
+}
+
+func TestFinalizeVersion(t *testing.T) {
+	for _, test := range finalizeTests {
+		finalVer, err := FinalizeVersion(test.input)
+		if finalVer == "" {
+			if err == nil {
+				t.Errorf("Finalize Version error, expected error but got nil")
+			}
+		} else if finalVer != test.output && err != nil {
+			t.Errorf("Finalize Version error expected %q but got %q", test.output, finalVer)
+		}
+	}
+}
+
 func BenchmarkParseSimple(b *testing.B) {
 	const VERSION = "0.0.1"
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		Parse(VERSION)
+		_, _ = Parse(VERSION)
 	}
 }
 
@@ -338,7 +455,7 @@ func BenchmarkParseComplex(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		Parse(VERSION)
+		_, _ = Parse(VERSION)
 	}
 }
 
@@ -347,7 +464,7 @@ func BenchmarkParseAverage(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		Parse(formatTests[n%l].result)
+		_, _ = Parse(formatTests[n%l].result)
 	}
 }
 
@@ -356,7 +473,7 @@ func BenchmarkParseTolerantAverage(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		ParseTolerant(tolerantFormatTests[n%l].result)
+		_, _ = ParseTolerant(tolerantFormatTests[n%l].result)
 	}
 }
 
@@ -366,7 +483,7 @@ func BenchmarkStringSimple(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		v.String()
+		_ = v.String()
 	}
 }
 
@@ -376,7 +493,7 @@ func BenchmarkStringLarger(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		v.String()
+		_ = v.String()
 	}
 }
 
@@ -386,7 +503,7 @@ func BenchmarkStringComplex(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		v.String()
+		_ = v.String()
 	}
 }
 
@@ -395,7 +512,7 @@ func BenchmarkStringAverage(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		formatTests[n%l].v.String()
+		_ = formatTests[n%l].v.String()
 	}
 }
 
@@ -405,7 +522,7 @@ func BenchmarkValidateSimple(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		v.Validate()
+		_ = v.Validate()
 	}
 }
 
@@ -415,7 +532,7 @@ func BenchmarkValidateComplex(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		v.Validate()
+		_ = v.Validate()
 	}
 }
 
@@ -424,7 +541,7 @@ func BenchmarkValidateAverage(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		formatTests[n%l].v.Validate()
+		_ = formatTests[n%l].v.Validate()
 	}
 }
 
