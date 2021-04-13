@@ -31,16 +31,16 @@ var Document = &cobra.Command{
 		}
 		externalCommand := externalCommands[systemtype]
 
-		res := exec.Command(externalCommand[0], externalCommand[1:]...)
+		command := exec.Command(externalCommand[0], externalCommand[1:]...)
 
-		stdRes, err := res.CombinedOutput()
+		commandRes, err := command.CombinedOutput()
 
 		if err != nil {
 			fmt.Println("ERR: " + err.Error())
 			return
 		}
 
-		fmt.Println(string(stdRes))
+		fmt.Println(string(commandRes))
 	},
 }
 
