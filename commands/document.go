@@ -16,6 +16,11 @@ var (
 	systemtype string
 )
 
+// Document will list the installed packages in current machinees zero to one arguments.
+//
+// It takes the following flags:
+//
+//  - `--type` tye type of the system: supported values are macos, debian
 var Document = &cobra.Command{
 	Use:   "document",
 	Short: "Document the current image",
