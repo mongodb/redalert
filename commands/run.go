@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -18,6 +19,9 @@ import (
 )
 
 type multiFlags []string
+type externalCommand []string
+
+var external_commands = map[string]externalCommand{"debian": []string{"dpk", "-l"}, "macos": []string{"pkgutil", "--pkgs"}}
 
 func (sf *multiFlags) String() string {
 	return strings.Join(*sf, ", ")
@@ -33,10 +37,11 @@ func (sf *multiFlags) Type() string {
 }
 
 var (
-	fileFlag string
-	suites   multiFlags
-	tests    multiFlags
-	output   string
+	fileFlag   string
+	suites     multiFlags
+	tests      multiFlags
+	output     string
+	systemtype string
 )
 
 func init() {
@@ -44,6 +49,8 @@ func init() {
 	Run.Flags().StringVarP(&output, "output", "o", "", "Output format to use. Valid values: text, json, csv. Default: text")
 	Run.Flags().Var(&suites, "suite", "Suite or alias name to run, can be passed multiple times.")
 	Run.Flags().Var(&tests, "test", "Specific test name to run, can be passed multiple times.")
+
+	Document.Flags().StringVarP(&systemtype, "type", "t", "", "type of the system, valid values: debian, rpm")
 }
 
 // Run will simply run the tests. It takes zero to one arguments. If no
@@ -139,6 +146,17 @@ var Document = &cobra.Command{
 	Short: "Document the current image",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Hello from the ducment command")
+		fmt.Println(systemtype)
+		res := exec.Command(external_commands[systemtype], "echo stdout; echo 1>&2 stderr")
+
+		stdRes, err := res.CombinedOutput()
+
+		if err != nil {
+			fmt.Println("ERR")
+			return
+		}
+
+		fmt.Println(stdRes)
 	},
 }
 
