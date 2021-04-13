@@ -21,7 +21,7 @@ import (
 type multiFlags []string
 type externalCommand []string
 
-var external_commands = map[string]externalCommand{"debian": []string{"dpk", "-l"}, "macos": []string{"pkgutil", "--pkgs"}}
+var externalCommands = map[string]externalCommand{"debian": []string{"dpk", "-l"}, "macos": []string{"pkgutil", "--pkgs"}}
 
 func (sf *multiFlags) String() string {
 	return strings.Join(*sf, ", ")
@@ -145,18 +145,22 @@ var Document = &cobra.Command{
 	Use:   "document",
 	Short: "Document the current image",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Hello from the ducment command")
-		fmt.Println(systemtype)
-		res := exec.Command(external_commands[systemtype], "echo stdout; echo 1>&2 stderr")
+		if _, ok := externalCommands[systemtype]; !ok {
+			fmt.Println("system type not found: " + systemtype)
+			return
+		}
+		externalCommand := externalCommands[systemtype]
+
+		res := exec.Command(externalCommand[0], externalCommand[1], "echo stdout; echo 1>&2 stderr")
 
 		stdRes, err := res.CombinedOutput()
 
 		if err != nil {
-			fmt.Println("ERR")
+			fmt.Println("ERR: " + string(err.Error()))
 			return
 		}
 
-		fmt.Println(stdRes)
+		fmt.Println(string(stdRes))
 	},
 }
 
