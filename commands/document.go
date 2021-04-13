@@ -10,6 +10,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var externalCommands = map[string]externalCommand{"debian": []string{"dpkg", "-l"}, "macos": []string{"pkgutil", "--pkgs"}}
+
 var (
 	systemtype string
 )

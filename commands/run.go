@@ -20,8 +20,6 @@ import (
 type multiFlags []string
 type externalCommand []string
 
-var externalCommands = map[string]externalCommand{"debian": []string{"dpk", "-l"}, "macos": []string{"pkgutil", "--pkgs"}}
-
 func (sf *multiFlags) String() string {
 	return strings.Join(*sf, ", ")
 }
