@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -37,11 +36,10 @@ func (sf *multiFlags) Type() string {
 }
 
 var (
-	fileFlag   string
-	suites     multiFlags
-	tests      multiFlags
-	output     string
-	systemtype string
+	fileFlag string
+	suites   multiFlags
+	tests    multiFlags
+	output   string
 )
 
 func init() {
@@ -49,8 +47,6 @@ func init() {
 	Run.Flags().StringVarP(&output, "output", "o", "", "Output format to use. Valid values: text, json, csv. Default: text")
 	Run.Flags().Var(&suites, "suite", "Suite or alias name to run, can be passed multiple times.")
 	Run.Flags().Var(&tests, "test", "Specific test name to run, can be passed multiple times.")
-
-	Document.Flags().StringVarP(&systemtype, "type", "t", "", "type of the system, valid values: debian, rpm")
 }
 
 // Run will simply run the tests. It takes zero to one arguments. If no
@@ -138,29 +134,6 @@ var Run = &cobra.Command{
 		}
 
 		os.Exit(exitCode)
-	},
-}
-
-var Document = &cobra.Command{
-	Use:   "document",
-	Short: "Document the current image",
-	Run: func(cmd *cobra.Command, args []string) {
-		if _, ok := externalCommands[systemtype]; !ok {
-			fmt.Println("system type not found: " + systemtype)
-			return
-		}
-		externalCommand := externalCommands[systemtype]
-
-		res := exec.Command(externalCommand[0], externalCommand[1], "echo stdout; echo 1>&2 stderr")
-
-		stdRes, err := res.CombinedOutput()
-
-		if err != nil {
-			fmt.Println("ERR: " + string(err.Error()))
-			return
-		}
-
-		fmt.Println(string(stdRes))
 	},
 }
 
