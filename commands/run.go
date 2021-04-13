@@ -18,6 +18,7 @@ import (
 )
 
 type multiFlags []string
+type externalCommand []string
 
 func (sf *multiFlags) String() string {
 	return strings.Join(*sf, ", ")
