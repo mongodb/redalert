@@ -26,12 +26,12 @@ var Document = &cobra.Command{
 		}
 		externalCommand := externalCommands[systemtype]
 
-		res := exec.Command(externalCommand[0], externalCommand[1], "echo stdout; echo 1>&2 stderr")
+		res := exec.Command(externalCommand[0], externalCommand[1:]...)
 
 		stdRes, err := res.CombinedOutput()
 
 		if err != nil {
-			fmt.Println("ERR: " + string(err.Error()))
+			fmt.Println("ERR: " + err.Error())
 			return
 		}
 
