@@ -5,8 +5,6 @@ import:
   version: ^0.0.3
 - package: github.com/spf13/pflag
   version: ^1.0.1
-- package: github.com/go-yaml/yaml
-  version: ^2.2.1
 - package: golang.org/x/sys
   subpackages:
   - windows/registry
