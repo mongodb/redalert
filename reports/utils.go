@@ -1,7 +1,7 @@
 package reports
 
-func isValidSystemType(systemType string) bool {
-	if _, ok := externalCommands[systemType]; !ok {
+func isSupported(packageManager string) bool {
+	if _, ok := externalCommands[packageManager]; !ok {
 		return false
 	}
 

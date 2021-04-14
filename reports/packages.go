@@ -2,6 +2,7 @@ package reports
 
 import (
 	"errors"
+	"fmt"
 	"os/exec"
 )
 
@@ -13,19 +14,20 @@ type Package struct {
 type externalCommand []string
 
 var externalCommands = map[string]externalCommand{
-	"linux": []string{"dpkg-query", "-W", "-f='${binary:Package};${Version}\n'"}}
+	"dpkg": []string{"dpkg-query", "-W", "-f='${binary:Package};${Version}\n'"}}
 
-func GetPackagesDetails(systemtype string) ([]Package, error) {
-	if !isValidSystemType(systemtype) {
-		return nil, errors.New("System type not supported: " + systemtype)
+func GetPackagesDetails(packageManager string) ([]Package, error) {
+	if !isSupported(packageManager) {
+		return nil, errors.New("Package manager is not supported: " + packageManager)
 	}
-	externalCommand := externalCommands[systemtype]
+	externalCommand := externalCommands[packageManager]
 	command := exec.Command(externalCommand[0], externalCommand[1:]...)
+	fmt.Println(command.String())
 	packageDetails, err := command.CombinedOutput()
 	if err != nil {
 		return nil, err
 	}
 
-	packageDetailsarsed := parseCommandOuput(string(packageDetails), systemtype)
+	packageDetailsarsed := parseCommandOuput(string(packageDetails), packageManager)
 	return packageDetailsarsed, nil
 }
