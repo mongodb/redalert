@@ -9,7 +9,7 @@ type externalCommand []string
 
 var externalCommands = map[string]externalCommand{"debian": []string{"dpkg", "-l"}, "macos": []string{"pkgutil", "--pkgs"}}
 
-func Packages(systemtype string) (string, error) {
+func GetPackagesDetails(systemtype string) (string, error) {
 
 	if _, ok := externalCommands[systemtype]; !ok {
 		return "", fmt.Errorf("system type not found: " + systemtype)

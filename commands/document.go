@@ -25,7 +25,7 @@ var Document = &cobra.Command{
 	Short: "Document the current image",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(systemtype) > 0 {
-			commandRes, err := reports.Packages(systemtype)
+			commandRes, err := reports.GetPackagesDetails(systemtype)
 			if err != nil {
 				fmt.Println("ERR: " + err.Error())
 			}
