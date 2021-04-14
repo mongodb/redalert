@@ -25,8 +25,8 @@ func parseDebianCommandOutput(commandOutput string) []Package {
 	return packages
 }
 
-func parseCommandOuput(commandOutput string, systemtype string) []Package {
-	if systemtype == "linux" {
+func parseCommandOuput(commandOutput string, packageManager string) []Package {
+	if packageManager == "dpkg" {
 		return parseDebianCommandOutput(commandOutput)
 	}
 

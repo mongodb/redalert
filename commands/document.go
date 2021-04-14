@@ -6,10 +6,13 @@ package commands
 import (
 	"encoding/json"
 	"fmt"
-	"runtime"
 
 	"github.com/mongodb/redalert/reports"
 	"github.com/spf13/cobra"
+)
+
+var (
+	packageManager string
 )
 
 // Document will list the installed packages in the system.
@@ -17,11 +20,10 @@ var Document = &cobra.Command{
 	Use:   "document",
 	Short: "Document the current image",
 	Run: func(cmd *cobra.Command, args []string) {
-		os := runtime.GOOS
-		fmt.Println("Current os: " + os)
+		fmt.Println("Package manager: " + packageManager)
 		details := make(map[string]interface{})
 
-		pacakgeDetails, err := reports.GetPackagesDetails(os)
+		pacakgeDetails, err := reports.GetPackagesDetails(packageManager)
 		if err != nil {
 			fmt.Println("ERR: " + err.Error())
 		}
@@ -33,4 +35,8 @@ var Document = &cobra.Command{
 		jsonString, _ := json.Marshal(details)
 		fmt.Println(string(jsonString))
 	},
+}
+
+func init() {
+	Document.Flags().StringVarP(&packageManager, "pkg-mngr", "p", "", "Package manager to be used to list the installed pacakges")
 }
