@@ -1,9 +1,14 @@
 package reports
 
 import (
-	"fmt"
+	"errors"
 	"os/exec"
 )
+
+type Package struct {
+	Name    string `json:"name"`
+	Version string `json:"version"`
+}
 
 type externalCommand []string
 
@@ -11,21 +16,17 @@ var externalCommands = map[string]externalCommand{
 	"debian": []string{"dpkg-query", "-W -f='${binary:Package};${Version}\n'"},
 	"macos":  []string{"pkgutil", "--pkgs"}}
 
-func GetPackagesDetails(systemtype string) (string, error) {
-
-	if _, ok := externalCommands[systemtype]; !ok {
-		return "", fmt.Errorf("system type not found: " + systemtype)
+func GetPackagesDetails(systemtype string) ([]Package, error) {
+	if !IsValidSystemType(systemtype) {
+		return nil, errors.New("System type not supported: " + systemtype)
 	}
 	externalCommand := externalCommands[systemtype]
-
 	command := exec.Command(externalCommand[0], externalCommand[1:]...)
-
-	commandRes, err := command.CombinedOutput()
-
+	packageDetails, err := command.CombinedOutput()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	fmt.Println(string(commandRes))
-	return string(commandRes), nil
+	packageDetailsarsed := parseCommandOuput(string(packageDetails), systemtype)
+	return packageDetailsarsed, nil
 }
