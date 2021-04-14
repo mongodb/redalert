@@ -1,22 +1,20 @@
-package commands
+package reports
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"strings"
 )
 
 func parseDebianCommandOutput(commandOutput string) []Package {
-	debex, err := ioutil.ReadFile("/Users/tural.farhadov/work/redalert/deb.out")
+	//Overriding the param for testing the pre-pupulated debian output
+	debex, err := ioutil.ReadFile("/tmp/deb.out")
 	if err != nil {
 		fmt.Print(err.Error())
 	}
 	commandOutput = string(debex)
 
 	rows := strings.Split(commandOutput, "\n")
-
 	var packages = []Package{}
 
 	for _, row := range rows {
@@ -41,28 +39,8 @@ func parseCommandOuput(commandOutput string, systemtype string) []Package {
 		return parseDebianCommandOutput(commandOutput)
 	}
 
-	//Testing
+	//Only debian is supported as of now
 	return parseDebianCommandOutput(commandOutput)
 
 	return []Package{}
-}
-
-func formatPacakges(packages []Package, format string) (string, error) {
-	if format == "json" {
-		return formatPackagesIntoJson(packages), nil
-	}
-
-	return "", errors.New("format not supported: " + format)
-}
-
-func formatPackagesIntoJson(packages []Package) string {
-	res, err := json.Marshal(packages)
-	if err != nil {
-		fmt.Println("Could not marshal")
-		return ""
-	}
-
-	jsonresult := fmt.Sprintf("{\"packages\": %s}", res)
-
-	return jsonresult
 }
