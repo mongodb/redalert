@@ -6,43 +6,30 @@ package commands
 import (
 	"encoding/json"
 	"fmt"
+	"runtime"
 
 	"github.com/mongodb/redalert/reports"
 	"github.com/spf13/cobra"
 )
 
-var (
-	systemtype string
-)
-
-// Document will list the installed packages in current machinees zero to one arguments.
-//
-// It takes the following flags:
-//
-//  - `--type` tye type of the system: supported values are macos, debian
+// Document will list the installed packages in the system.
 var Document = &cobra.Command{
 	Use:   "document",
 	Short: "Document the current image",
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(systemtype) > 0 {
-			commandRes, err := reports.GetPackagesDetails(systemtype)
-			if err != nil {
-				fmt.Println("ERR: " + err.Error())
-			}
-			fmt.Println(string(commandRes))
-		}
+		os := runtime.GOOS
+		details := make(map[string]interface{})
 
-		details := make(map[string]map[string]string)
+		pacakgeDetails, err := reports.GetPackagesDetails(os)
+		if err != nil {
+			fmt.Println("ERR: " + err.Error())
+		}
 
 		toolchainDetails := reports.GetToolchainDetails()
 		details["toolchains"] = toolchainDetails
-		//fmt.Println(details)
+		details["packages"] = pacakgeDetails
 
 		jsonString, _ := json.Marshal(details)
 		fmt.Println(string(jsonString))
 	},
-}
-
-func init() {
-	Document.Flags().StringVarP(&systemtype, "type", "t", "", "type of the system, valid values: debian, rpm")
 }
