@@ -14,7 +14,7 @@ type externalCommand []string
 
 var externalCommands = map[string]externalCommand{
 	"debian": []string{"dpkg-query", "-W -f='${binary:Package};${Version}\n'"},
-	"macos":  []string{"pkgutil", "--pkgs"}}
+	"darwin": []string{"pkgutil", "--pkgs"}}
 
 func GetPackagesDetails(systemtype string) ([]Package, error) {
 	if !isValidSystemType(systemtype) {
