@@ -4,6 +4,7 @@
 package commands
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/mongodb/redalert/reports"
@@ -27,11 +28,18 @@ var Document = &cobra.Command{
 			commandRes, err := reports.Packages(systemtype)
 			if err != nil {
 				fmt.Println("ERR: " + err.Error())
-				return
 			}
 			fmt.Println(string(commandRes))
 		}
 
+		details := make(map[string]map[string]string)
+
+		toolchainDetails := reports.Toolchains()
+		details["toolchains"] = toolchainDetails
+		//fmt.Println(details)
+
+		jsonString, _ := json.Marshal(details)
+		fmt.Println(string(jsonString))
 	},
 }
 
