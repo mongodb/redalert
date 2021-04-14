@@ -17,7 +17,7 @@ var externalCommands = map[string]externalCommand{
 	"macos":  []string{"pkgutil", "--pkgs"}}
 
 func GetPackagesDetails(systemtype string) ([]Package, error) {
-	if !IsValidSystemType(systemtype) {
+	if !isValidSystemType(systemtype) {
 		return nil, errors.New("System type not supported: " + systemtype)
 	}
 	externalCommand := externalCommands[systemtype]

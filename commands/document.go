@@ -24,11 +24,6 @@ var Document = &cobra.Command{
 	Use:   "document",
 	Short: "Document the current image",
 	Run: func(cmd *cobra.Command, args []string) {
-		if !reports.IsValidSystemType(systemtype) {
-			fmt.Errorf("System type not supported: " + systemtype)
-			return
-		}
-
 		details := make(map[string]interface{})
 
 		pacakgeDetails, err := reports.GetPackagesDetails(systemtype)
