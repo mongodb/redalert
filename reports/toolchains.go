@@ -32,7 +32,7 @@ func ReadRevision(fn string) (string, error) {
 	return line, nil
 }
 
-func Toolchains() map[string]string {
+func GetToolchainDetails() map[string]string {
 	toolchains := make(map[string]string)
 	toolchains["mongodb"] = "/tmp/revision.txt"
 	toolchains["python"] = "/tmp/rev_python.txt"

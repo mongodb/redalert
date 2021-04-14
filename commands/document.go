@@ -34,7 +34,7 @@ var Document = &cobra.Command{
 
 		details := make(map[string]map[string]string)
 
-		toolchainDetails := reports.Toolchains()
+		toolchainDetails := reports.GetToolchainDetails()
 		details["toolchains"] = toolchainDetails
 		//fmt.Println(details)
 
