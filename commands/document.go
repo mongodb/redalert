@@ -17,10 +17,6 @@ type Package struct {
 	Version string `json:"version"`
 }
 
-var externalCommands = map[string]externalCommand{
-	"debian": []string{"dpkg-query", "-W -f='${binary:Package};${Version}\n'"},
-	"macos":  []string{"pkgutil", "--pkgs"}}
-
 var (
 	systemtype string
 )

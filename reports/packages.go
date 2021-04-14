@@ -7,7 +7,9 @@ import (
 
 type externalCommand []string
 
-var externalCommands = map[string]externalCommand{"debian": []string{"dpkg", "-l"}, "macos": []string{"pkgutil", "--pkgs"}}
+var externalCommands = map[string]externalCommand{
+	"debian": []string{"dpkg-query", "-W -f='${binary:Package};${Version}\n'"},
+	"macos":  []string{"pkgutil", "--pkgs"}}
 
 func GetPackagesDetails(systemtype string) (string, error) {
 
