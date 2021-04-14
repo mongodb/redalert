@@ -1,6 +1,6 @@
 module github.com/mongodb/redalert
 
-go 1.16
+go 1.15
 
 require (
 	github.com/blang/semver v1.1.1-0.20200524140125-dff411dc0692
