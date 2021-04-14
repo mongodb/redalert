@@ -13,7 +13,7 @@ type Package struct {
 type externalCommand []string
 
 var externalCommands = map[string]externalCommand{
-	"debian": []string{"dpkg-query", "-W -f='${binary:Package};${Version}\n'"},
+	"linux":  []string{"dpkg-query", "-W -f='${binary:Package};${Version}\n'"},
 	"darwin": []string{"pkgutil", "--pkgs"}}
 
 func GetPackagesDetails(systemtype string) ([]Package, error) {
