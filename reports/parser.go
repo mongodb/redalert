@@ -1,19 +1,10 @@
 package reports
 
 import (
-	"fmt"
-	"io/ioutil"
 	"strings"
 )
 
 func parseDebianCommandOutput(commandOutput string) []Package {
-	//Overriding the param for testing the pre-pupulated debian output
-	debex, err := ioutil.ReadFile("/tmp/deb.out")
-	if err != nil {
-		fmt.Print(err.Error())
-	}
-	commandOutput = string(debex)
-
 	rows := strings.Split(commandOutput, "\n")
 	var packages = []Package{}
 
@@ -35,12 +26,9 @@ func parseDebianCommandOutput(commandOutput string) []Package {
 }
 
 func parseCommandOuput(commandOutput string, systemtype string) []Package {
-	if systemtype == "debian" {
+	if systemtype == "linux" {
 		return parseDebianCommandOutput(commandOutput)
 	}
-
-	//Only debian is supported as of now
-	return parseDebianCommandOutput(commandOutput)
 
 	return []Package{}
 }
