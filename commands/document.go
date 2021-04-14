@@ -5,12 +5,10 @@ package commands
 
 import (
 	"fmt"
-	"os/exec"
 
+	"github.com/mongodb/redalert/reports"
 	"github.com/spf13/cobra"
 )
-
-var externalCommands = map[string]externalCommand{"debian": []string{"dpkg", "-l"}, "macos": []string{"pkgutil", "--pkgs"}}
 
 var (
 	systemtype string
@@ -25,22 +23,15 @@ var Document = &cobra.Command{
 	Use:   "document",
 	Short: "Document the current image",
 	Run: func(cmd *cobra.Command, args []string) {
-		if _, ok := externalCommands[systemtype]; !ok {
-			fmt.Println("system type not found: " + systemtype)
-			return
-		}
-		externalCommand := externalCommands[systemtype]
-
-		command := exec.Command(externalCommand[0], externalCommand[1:]...)
-
-		commandRes, err := command.CombinedOutput()
-
-		if err != nil {
-			fmt.Println("ERR: " + err.Error())
-			return
+		if len(systemtype) > 0 {
+			commandRes, err := reports.Packages(systemtype)
+			if err != nil {
+				fmt.Println("ERR: " + err.Error())
+				return
+			}
+			fmt.Println(string(commandRes))
 		}
 
-		fmt.Println(string(commandRes))
 	},
 }
 
