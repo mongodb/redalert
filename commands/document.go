@@ -18,6 +18,7 @@ var Document = &cobra.Command{
 	Short: "Document the current image",
 	Run: func(cmd *cobra.Command, args []string) {
 		os := runtime.GOOS
+		fmt.Println("Current os: " + os)
 		details := make(map[string]interface{})
 
 		pacakgeDetails, err := reports.GetPackagesDetails(os)
