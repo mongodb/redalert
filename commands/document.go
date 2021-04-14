@@ -6,10 +6,20 @@ package commands
 import (
 	"encoding/json"
 	"fmt"
+	"os/exec"
 
 	"github.com/mongodb/redalert/reports"
 	"github.com/spf13/cobra"
 )
+
+type Package struct {
+	Name    string `json:"name"`
+	Version string `json:"version"`
+}
+
+var externalCommands = map[string]externalCommand{
+	"debian": []string{"dpkg-query", "-W -f='${binary:Package};${Version}\n'"},
+	"macos":  []string{"pkgutil", "--pkgs"}}
 
 var (
 	systemtype string
@@ -33,6 +43,9 @@ var Document = &cobra.Command{
 		}
 
 		details := make(map[string]map[string]string)
+		externalCommand := externalCommands[systemtype]
+		command := exec.Command(externalCommand[0], externalCommand[1:]...)
+		commandRes, err := command.CombinedOutput()
 
 		toolchainDetails := reports.GetToolchainDetails()
 		details["toolchains"] = toolchainDetails
@@ -40,6 +53,16 @@ var Document = &cobra.Command{
 
 		jsonString, _ := json.Marshal(details)
 		fmt.Println(string(jsonString))
+		commandsParsed := parseCommandOuput(string(commandRes), systemtype)
+
+		formattedPackages, err := formatPacakges(commandsParsed, "json")
+
+		if err != nil {
+			fmt.Println("Could not format the pacakges")
+			return
+		}
+
+		fmt.Println(formattedPackages)
 	},
 }
 
