@@ -31,15 +31,5 @@ var Document = &cobra.Command{
 
 		jsonString, _ := json.Marshal(details)
 		fmt.Println(string(jsonString))
-		commandsParsed := parseCommandOuput(string(commandRes), systemtype)
-
-		formattedPackages, err := formatPacakges(commandsParsed, "json")
-
-		if err != nil {
-			fmt.Println("Could not format the pacakges")
-			return
-		}
-
-		fmt.Println(formattedPackages)
 	},
 }
