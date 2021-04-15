@@ -26,7 +26,11 @@ func parseLinuxOutput(commandOutput string) []Package {
 }
 
 func parseCommandOuput(commandOutput string, packageManager string) []Package {
-	if packageManager == "dpkg" || packageManager == "rpm" {
+	switch packageManager {
+	case
+		"dpkg",
+		"rpm",
+		"zypper":
 		return parseLinuxOutput(commandOutput)
 	}
 
