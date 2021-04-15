@@ -2,7 +2,6 @@ package reports
 
 import (
 	"errors"
-	"fmt"
 	"os/exec"
 )
 
@@ -14,7 +13,9 @@ type Package struct {
 type externalCommand []string
 
 var externalCommands = map[string]externalCommand{
-	"dpkg": []string{"dpkg-query", "-W", "-f='${binary:Package};${Version}\n'"}}
+	"dpkg": []string{"dpkg-query", "-W", "-f='${binary:Package};${Version}|'"},
+	"rpm":  []string{"rpm", "-qa", "--queryformat", "%{NAME};%{VERSION}|"},
+}
 
 func GetPackagesDetails(packageManager string) ([]Package, error) {
 	if !isSupported(packageManager) {
@@ -22,7 +23,6 @@ func GetPackagesDetails(packageManager string) ([]Package, error) {
 	}
 	externalCommand := externalCommands[packageManager]
 	command := exec.Command(externalCommand[0], externalCommand[1:]...)
-	fmt.Println(command.String())
 	packageDetails, err := command.CombinedOutput()
 	if err != nil {
 		return nil, err

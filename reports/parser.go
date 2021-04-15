@@ -4,8 +4,8 @@ import (
 	"strings"
 )
 
-func parseDebianCommandOutput(commandOutput string) []Package {
-	rows := strings.Split(commandOutput, "\n")
+func parseLinuxOutput(commandOutput string) []Package {
+	rows := strings.Split(commandOutput, "|")
 	var packages = []Package{}
 
 	for _, row := range rows {
@@ -26,8 +26,8 @@ func parseDebianCommandOutput(commandOutput string) []Package {
 }
 
 func parseCommandOuput(commandOutput string, packageManager string) []Package {
-	if packageManager == "dpkg" {
-		return parseDebianCommandOutput(commandOutput)
+	if packageManager == "dpkg" || packageManager == "rpm" {
+		return parseLinuxOutput(commandOutput)
 	}
 
 	return []Package{}
