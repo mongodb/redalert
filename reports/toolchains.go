@@ -6,6 +6,7 @@ package reports
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 )
@@ -13,7 +14,7 @@ import (
 func ReadRevision(fn string) (string, error) {
 	f, err := os.Open(fn)
 	if err != nil {
-		return "", err
+		return "none", nil
 	}
 	defer f.Close()
 	bf := bufio.NewReader(f)
@@ -23,7 +24,9 @@ func ReadRevision(fn string) (string, error) {
 	line, err = bf.ReadString('\n')
 	line = strings.TrimSuffix(line, "\n")
 	if err != nil {
-		return "", err
+		if err != io.EOF {
+			return "", err
+		}
 	}
 
 	if line == "" {
