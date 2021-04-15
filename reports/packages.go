@@ -13,8 +13,9 @@ type Package struct {
 type externalCommand []string
 
 var externalCommands = map[string]externalCommand{
-	"dpkg": []string{"dpkg-query", "-W", "-f='${binary:Package};${Version}|'"},
-	"rpm":  []string{"rpm", "-qa", "--queryformat", "%{NAME};%{VERSION}|"},
+	"dpkg":   []string{"dpkg-query", "-W", "-f='${binary:Package};${Version}|'"},
+	"rpm":    []string{"rpm", "-qa", "--queryformat", "%{NAME};%{VERSION}|"},
+	"zypper": []string{"bash", "-c", "zypper search  --installed-only -s | awk 'NR>5 {printf $3\";\"$7\"|\"}'"},
 }
 
 func GetPackagesDetails(packageManager string) ([]Package, error) {
