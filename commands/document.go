@@ -22,17 +22,11 @@ var Document = &cobra.Command{
 	Use:   "document",
 	Short: "Document the current image",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Package manager: " + packageManager)
 		details := make(map[string]interface{})
-
-		pacakgeDetails, err := reports.GetPackagesDetails(packageManager)
-		if err != nil {
-			fmt.Println("ERR: " + err.Error())
-		}
 
 		// Load reports conf file
 		var testsFile testfile.TestFile
-
+		err := fmt.Errorf("")
 		if fileFlag == "" {
 			testsFile, err = loadTestFile(findReportFile())
 		} else {
@@ -47,17 +41,27 @@ var Document = &cobra.Command{
 		toolchains := make(map[string]string)
 		// Find reports for this suite
 		for _, suite := range suites {
-			reports := testsFile.TestsToRun(suite)
-			for _, report := range reports {
+			reportsToRun := testsFile.TestsToRun(suite)
+			for _, report := range reportsToRun {
 				if report.Type == "toolchains" {
 					toolchains[report.Name] = report.Args["path"].(string)
+				}
+				if report.Type == "packages" {
+					fmt.Println(report.Args["pkg-mgr"])
+					packageDetails, err := reports.GetPackagesDetails(report.Args["pkg-mgr"].(string))
+					if err != nil {
+						fmt.Println("ERR: " + err.Error())
+					}
+					details["packages"] = packageDetails
 				}
 			}
 		}
 
 		toolchainDetails := reports.GetToolchainDetails(toolchains)
-		details["toolchains"] = toolchainDetails
-		details["packages"] = pacakgeDetails
+		if len(toolchainDetails) > 0 {
+			details["toolchains"] = toolchainDetails
+		}
+		//details["packages"] = packageDetails
 
 		jsonString, _ := json.Marshal(details)
 		fmt.Println(string(jsonString))
@@ -65,7 +69,6 @@ var Document = &cobra.Command{
 }
 
 func init() {
-	Document.Flags().StringVarP(&packageManager, "pkg-mngr", "p", "", "Package manager to be used to list the installed pacakges")
 	Document.Flags().StringVarP(&fileFlag, "file", "f", "", "Path to test file to run. Note: this overrides default test file detection.")
 	Document.Flags().Var(&suites, "suite", "Suite or alias name to run, can be passed multiple times.")
 }
