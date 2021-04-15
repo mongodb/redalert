@@ -1,0 +1,31 @@
+tests:
+
+  - name: mongodbtoolchain
+    suites:
+      - ubuntu1604
+    type: toolchains
+    args:
+      path: "/opt/mongodbtoolchain/toolchain_version"
+
+  - name: pythontoolchain
+    suites:
+      - ubuntu1604
+      - ubuntu1804
+    type: toolchains
+    args:
+      path: "/tmp/python2.txt"
+
+  - name: golang
+    suites:
+      - ubuntu1604
+    type: toolchains
+    args:
+      path: "/opt/golang/toolchain_version"
+
+  - name: packages
+    suites:
+      - ubuntu1604
+    type: packages
+    args:
+      pkg-mgr: "dpkg"
+
