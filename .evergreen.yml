@@ -1,0 +1,44 @@
+#######################################
+#                Tasks                #
+#######################################
+tasks:
+  - name: build
+    tags: ["dist"]
+    commands:
+      - command: git.get_project
+        type: system
+        params:
+          directory: gopath/src/github.com/mongodb/redalert
+      - command: shell.exec
+        params:
+          script: |
+            export GOPATH=`pwd`/gopath
+            cd gopath/src/github.com/mongodb/redalert 
+            ${build_env|} go build
+            tar -cvzf  ./redalert.tgz ./redalert
+
+      - command: s3.put
+        type: system
+        params:
+          aws_key: ${aws_key}
+          aws_secret: ${aws_secret}
+          local_file: gopath/src/github.com/mongodb/redalert/redalert.tgz
+          remote_file: redalert/${build_id}-${build_variant}/redalert-dist-${revision}.tgz
+          bucket: evg-project-redalert
+          content_type: application/x-gzip
+          permissions: public-read
+          display_name: dist.tar.tgz
+
+
+#######################################
+#           Buildvariants             #
+#######################################
+buildvariants:
+  - name: ubuntu1604
+    display_name: Ubuntu 16.04
+    run_on:
+      - ubuntu1604-test
+    expansions:
+      build_env: "PATH=/opt/golang/go1.15/bin:$PATH GOROOT=/opt/golang/go1.15"
+    tasks:
+      - ".dist"
