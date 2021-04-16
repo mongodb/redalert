@@ -1,10 +1,8 @@
-hash: e199583086d79d998a573b8a65928647a9ed0830d33bcd170b026c6f8ee63207
-updated: 2018-07-18T12:20:09.342487-04:00
+hash: 5ecf3611164ae41f1750f5a4be43744f60f04e69ce0e9199e0c7b6aefd074c84
+updated: 2021-04-12T15:24:29.730116-04:00
 imports:
 - name: github.com/blang/semver
-  version: 2ee87856327ba09384cabd113bc6b5d174e9ec0f
-- name: github.com/go-yaml/yaml
-  version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
+  version: dff411dc0692cbc4d8eef4fb799a291f2d248645
 - name: github.com/google/shlex
   version: 6f45313302b9c56850fc17f99e40caebce98c716
 - name: github.com/inconshreveable/mousetrap
@@ -12,14 +10,14 @@ imports:
 - name: github.com/mitchellh/mapstructure
   version: f15292f7a699fcc1a38a80977f80a046874ba8ac
 - name: github.com/spf13/cobra
-  version: ef82de70bb3f60c65fb8eebacbb2d122ef517385
+  version: 6607e6b8603f56adb027298ee6695e06ffb3a819
 - name: github.com/spf13/pflag
-  version: 583c0c0531f06d5278b7d917446061adc344b5cd
+  version: 2e9d26c8c37aae03e3f9d4e90b7116f5accb7cab
 - name: golang.org/x/sys
   version: c200b10b5d5e122be351b67af224adc6128af5bf
   subpackages:
   - windows
   - windows/registry
 - name: gopkg.in/yaml.v2
-  version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
+  version: 7649d4548cb53a614db133b2a8ac1f31859dda8c
 testImports: []
