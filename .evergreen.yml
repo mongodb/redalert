@@ -12,10 +12,18 @@ tasks:
 
       - command: shell.exec
         params:
+          shell: bash
           script: |
             set -o errexit
+            set -o verbose
+
             export GOPATH=`pwd`/gopath
+
+            virtualenv --python python3 venv3
+            source venv3/bin/activate
             cd gopath/src/github.com/mongodb/redalert
+            pip install -r ./requirements.txt
+
             ${build_env|} go test ./...
             ${build_env|} go build
             tar -cvzf  ./redalert.tgz ./redalert
@@ -41,6 +49,15 @@ buildvariants:
     display_name: Ubuntu 16.04
     run_on:
       - ubuntu1604-test
+    expansions:
+      build_env: "PATH=/opt/golang/go1.15/bin:$PATH GOROOT=/opt/golang/go1.15"
+    tasks:
+      - ".dist"
+  
+  - name: ubuntu1604
+    display_name: Ubuntu 16.04
+    run_on:
+      - ubuntu1604-arm64-test
     expansions:
       build_env: "PATH=/opt/golang/go1.15/bin:$PATH GOROOT=/opt/golang/go1.15"
     tasks:
