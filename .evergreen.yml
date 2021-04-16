@@ -9,11 +9,14 @@ tasks:
         type: system
         params:
           directory: gopath/src/github.com/mongodb/redalert
+
       - command: shell.exec
         params:
           script: |
+            set -o errexit
             export GOPATH=`pwd`/gopath
-            cd gopath/src/github.com/mongodb/redalert 
+            cd gopath/src/github.com/mongodb/redalert
+            ${build_env|} go test ./...
             ${build_env|} go build
             tar -cvzf  ./redalert.tgz ./redalert
 
