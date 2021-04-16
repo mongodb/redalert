@@ -32,5 +32,5 @@ func parseCommandOuput(commandOutput string, packageManager string) map[string]s
 		return parseLinuxOutput(commandOutput)
 	}
 
-	return nil
+	return map[string]string{}
 }
