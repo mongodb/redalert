@@ -5,11 +5,6 @@ import (
 	"os/exec"
 )
 
-type Package struct {
-	Name    string `json:"name"`
-	Version string `json:"version"`
-}
-
 type externalCommand []string
 
 var externalCommands = map[string]externalCommand{
@@ -18,7 +13,7 @@ var externalCommands = map[string]externalCommand{
 	"zypper": []string{"bash", "-c", "zypper search  --installed-only -s | awk 'NR>5 {printf $3\";\"$7\"|\"}'"},
 }
 
-func GetPackagesDetails(packageManager string) ([]Package, error) {
+func GetPackagesDetails(packageManager string) (map[string]string, error) {
 	if !isSupported(packageManager) {
 		return nil, errors.New("Package manager is not supported: " + packageManager)
 	}
