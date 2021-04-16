@@ -4,9 +4,9 @@ import (
 	"strings"
 )
 
-func parseLinuxOutput(commandOutput string) []Package {
+func parseLinuxOutput(commandOutput string) map[string]string {
 	rows := strings.Split(commandOutput, "|")
-	var packages = []Package{}
+	packages := make(map[string]string)
 
 	for _, row := range rows {
 		if row == "" {
@@ -14,18 +14,16 @@ func parseLinuxOutput(commandOutput string) []Package {
 		}
 
 		rowElements := strings.Split(row, ";")
-		p := Package{Name: rowElements[0]}
 		if len(rowElements) > 1 {
-			p.Version = rowElements[1]
+			packages[rowElements[0]] = rowElements[1]
 		}
 
-		packages = append(packages, p)
 	}
 
 	return packages
 }
 
-func parseCommandOuput(commandOutput string, packageManager string) []Package {
+func parseCommandOuput(commandOutput string, packageManager string) map[string]string {
 	switch packageManager {
 	case
 		"dpkg",
@@ -34,5 +32,5 @@ func parseCommandOuput(commandOutput string, packageManager string) []Package {
 		return parseLinuxOutput(commandOutput)
 	}
 
-	return []Package{}
+	return nil
 }
