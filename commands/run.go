@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/mongodb/redalert/testfile"
 	"github.com/spf13/cobra"
@@ -88,7 +89,7 @@ var Run = &cobra.Command{
 			os.Exit(1)
 		}
 
-		results := map[string]error{}
+		var exitCode int
 
 		for _, suite := range suites {
 			tests := testsFile.TestsToRun(suite)
@@ -101,7 +102,8 @@ var Run = &cobra.Command{
 			checksToRun := make(chan testfile.CheckToRun, len(loadedChecks))
 			checkResults := make(chan checkResult, len(loadedChecks))
 
-			for i := 0; i < runtime.NumCPU(); i++ {
+			n := runtime.NumCPU()
+			for i := 0; i < n; i++ {
 				go runCheck(checksToRun, checkResults)
 			}
 
@@ -109,25 +111,24 @@ var Run = &cobra.Command{
 				checksToRun <- c
 			}
 
-			for i := 0; i < len(loadedChecks); i++ {
-				result := <-checkResults
-				results[result.Name] = result.Result
+			timeout := time.NewTimer(5 * time.Minute)
+
+			for i := 0; i != len(loadedChecks); i++ {
+				select {
+				case <-timeout.C:
+					return
+				case r := <-checkResults:
+					if r.Result == nil {
+						fmt.Printf("%s: SUCCESS\n", r.Name)
+					} else {
+						fmt.Printf("%s: FAILURE\n%s\n", r.Name, r.Result)
+						exitCode = 1
+					}
+				}
 			}
 
 			close(checksToRun)
 			close(checkResults)
-		}
-
-		exitCode := 0
-
-		for name, result := range results {
-			if result == nil {
-				fmt.Printf("%s: SUCCESS\n", name)
-				continue
-			}
-
-			fmt.Printf("%s: FAILURE\n%s\n", name, result)
-			exitCode = 1
 		}
 
 		os.Exit(exitCode)
