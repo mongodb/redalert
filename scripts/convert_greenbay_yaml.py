@@ -85,7 +85,9 @@ def convert_compile_gcc(test):
         test['args']['run'] = True
     test['type'] = 'compile-gcc'
     if 'cflags' in test['args']:
-        test['args']['cflags'] = ' '.join(test['args']['cflags'])
+        test['args']['cflags'] = ' '.join(test['args']['cflags'] + ["-c"])
+    else:
+        test["args"]["cflags"] = "-c"
     return test
 
 
