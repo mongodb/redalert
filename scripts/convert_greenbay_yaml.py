@@ -81,15 +81,37 @@ def convert_command_group_all(test):
 
 def convert_compile_gcc(test):
     """compile-*gcc-auto superseded by compile-gcc"""
+    flags = list()
+    if "cflags" in test["args"]:
+        flags = test['args']['cflags']
+
     if 'and-run' in test['type']:
         test['args']['run'] = True
-    test['type'] = 'compile-gcc'
-    if 'cflags' in test['args']:
-        test['args']['cflags'] = ' '.join(test['args']['cflags'] + ["-c"])
     else:
-        test["args"]["cflags"] = "-c"
+        flags.append("-c")
+
+    if len(flags) > 0:
+        test['args']['cflags'] = ' '.join(flags)
+
+    test['type'] = 'compile-gcc'
     return test
 
+def convert_yum(test):
+    test["type"] = "yum-installed"
+
+    if "package" in test["args"]:
+        test["args"]["packages"] = [test["args"]["package"]]
+        del test["args"]["package"]
+
+    return test
+
+def convert_python_pip(test):
+    test["type"] = "python-module-version"
+
+    if "python" not in test["args"]:
+        test["args"]["python"] = "python"
+
+    return test
 
 TRANSLATION_TABLE = {
     'shell-operation': convert_shell_operation,
