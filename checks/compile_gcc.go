@@ -52,7 +52,7 @@ func (cg CompileGcc) Check() error {
 	defer os.RemoveAll(tmpfolder)
 
 	srcfileName := filepath.Join(tmpfolder, "src.c")
-	outfileName := filepath.Join(tmpfolder, "out.o")
+	outfileName := filepath.Join(tmpfolder, "out")
 
 	srcfile, err := os.Create(srcfileName)
 	if err != nil {
