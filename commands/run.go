@@ -113,10 +113,11 @@ var Run = &cobra.Command{
 
 			timeout := time.NewTimer(5 * time.Minute)
 
-			for i := 0; i != len(loadedChecks); i++ {
+			for i := 0; i < len(loadedChecks); i++ {
 				select {
 				case <-timeout.C:
-					return
+					fmt.Println("ERROR: timeout expired")
+					os.Exit(1)
 				case r := <-checkResults:
 					if r.Result == nil {
 						fmt.Printf("%s: SUCCESS\n", r.Name)
@@ -126,9 +127,6 @@ var Run = &cobra.Command{
 					}
 				}
 			}
-
-			close(checksToRun)
-			close(checkResults)
 		}
 
 		os.Exit(exitCode)
