@@ -12,8 +12,7 @@ import (
 )
 
 func init() {
-	availableChecks["pip-installed"] = PipInstalledFromArgs
-	availableChecks["python-module-version"] = availableChecks["pip-installed"]
+	availableChecks["python-module-version"] = PipInstalledFromArgs
 }
 
 // PipInstalled checks if python module is installed on the system
@@ -35,6 +34,7 @@ func init() {
 //   relationship: Optional comparison operator for the version provided. Valid
 //                 values are lt, lte, gt, gte, eq. Defaults to gte (greater than or equal to)
 type PipInstalled struct {
+	Python       string
 	Module       string
 	Version      string
 	Relationship string
@@ -84,7 +84,7 @@ func (pmv PipInstalled) Check() error {
 	}
 
 	pyCommand := "import " + pmv.Module + "; print(" + pmv.Statement + ")"
-	out, err := exec.Command("python", "-c", pyCommand).CombinedOutput()
+	out, err := exec.Command(pmv.Python, "-c", pyCommand).CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("%s isn't installed and should be: %s, %s", pmv.Module, err, string(out))
 	}
