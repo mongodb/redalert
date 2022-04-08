@@ -119,7 +119,11 @@ TRANSLATION_TABLE = {
     'run-program-system-python2': convert_run_program_system_python,
     'command-group-all': convert_command_group_all,
     'compile-and-run-gcc-auto': convert_compile_gcc,
-    'compile-gcc-auto': convert_compile_gcc
+    'compile-gcc-auto': convert_compile_gcc,
+    'yum-installed': convert_yum,
+    'yum-group-any': convert_yum,
+    'python-module-version': convert_python_pip,
+    'pip-installed': convert_python_pip,
 }
 
 
