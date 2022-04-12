@@ -1,12 +1,10 @@
 // Copyright 2018 MongoDB Inc. All rights reserved. Use of this source code is
 // governed by the Apache-2.0 license that can be found in the LICENSE file.
 
-
 package checks
 
 import (
 	"fmt"
-	"log"
 	"os/exec"
 )
 
@@ -31,9 +29,12 @@ type YumInstalled struct {
 // Check if an rpm is installed on the system
 func (yi YumInstalled) Check() error {
 	for _, p := range yi.Packages {
-		out, err := exec.Command("yum", "list", "installed", p).Output()
+
+		cmd := exec.Command("yum", "list", "installed", p)
+
+		out, err := cmd.CombinedOutput()
 		if err != nil {
-			log.Fatal(err)
+			return fmt.Errorf("run yum list installed %s: %w", p, err)
 		}
 
 		if len(out) <= 0 {
