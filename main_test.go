@@ -20,7 +20,7 @@ func TestRunCommand(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create temp: %s", err)
 	}
-	// defer os.RemoveAll(dir)
+	defer os.RemoveAll(dir)
 
 	testFile := filepath.Join(dir, "test.txt")
 	if err := os.WriteFile(testFile, []byte("test"), os.ModePerm); err != nil {
