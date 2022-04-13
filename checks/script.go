@@ -60,7 +60,6 @@ type RunScript struct {
 
 // Check Runs a script and checks the return code or output
 func (rs RunScript) Check() error {
-
 	tmpfile, err := ioutil.TempFile(os.TempDir(), "testScript_")
 	if err != nil {
 		return fmt.Errorf("Problem creating a tmpfile: %s", err)
