@@ -55,5 +55,5 @@ func TestPythonModuleVersion(t *testing.T) {
 		},
 	}
 
-	runCheckerTests(t, tests, availableChecks["pip-installed"])
+	runCheckerTests(t, tests, availableChecks["python-module-version"])
 }
