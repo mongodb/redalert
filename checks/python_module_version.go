@@ -83,6 +83,10 @@ func (pmv PipInstalled) Check() error {
 		pmv.Statement = pmv.Module + ".__version__"
 	}
 
+	if pmv.Python == "" {
+		pmv.Python = "python"
+	}
+
 	pyCommand := "import " + pmv.Module + "; print(" + pmv.Statement + ")"
 	out, err := exec.Command(pmv.Python, "-c", pyCommand).CombinedOutput()
 	if err != nil {
