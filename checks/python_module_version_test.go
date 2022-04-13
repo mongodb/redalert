@@ -31,14 +31,6 @@ func TestPythonModuleVersion(t *testing.T) {
 			},
 		},
 		{
-			Name: "pyyaml should be version 5.2.0",
-			Args: Args{
-				"module":       "yaml",
-				"relationship": "eq",
-				"version":      "5.2.0",
-			},
-		},
-		{
 			Name: "pyyaml should not be version 6.00",
 			Args: Args{
 				"module":  "yaml",
