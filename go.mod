@@ -7,7 +7,7 @@ require (
 	github.com/google/shlex v0.0.0-20150127133951-6f45313302b9
 	github.com/mitchellh/mapstructure v1.1.2
 	github.com/spf13/cobra v0.0.7
-	golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a
+	golang.org/x/sys v0.1.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
